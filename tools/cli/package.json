@@ -1,0 +1,21 @@
+{
+  "name": "ui-blocks",
+  "version": "1.0.0",
+  "bin": {
+    "ui@blocks": "./UIBlocks.js"
+  },
+  "description": "",
+  "main": "./UIBlocks.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^5.6.0",
+    "commander": "^14.0.0"
+  }
+}
+

@@ -1,0 +1,31 @@
+import dynamic from "next/dynamic";
+
+export const componentExamples: Record<string, any> = {
+  button: dynamic(() => import("@/examples/ButtonExample")),
+  input: dynamic(() => import("@/examples/InputExample")),
+  alert: dynamic(() => import("@/examples/AlertExample")),
+  accordion: dynamic(() => import("@/examples/AccordionExample")),
+  alertdialog: dynamic(() => import("@/examples/AlertDialogExample")),
+  badge: dynamic(() => import("@/examples/BadgeExample")),
+  hovercard: dynamic(() => import("@/examples/HoverCardExample")),
+  aspectratio: dynamic(() => import("@/examples/AspectRatioExample")),
+  textarea: dynamic(() => import("@/examples/TextAreaExample")),
+  select: dynamic(() => import("@/examples/SelectExample")),
+  radiogroup: dynamic(() => import("@/examples/RadioGroupExample")),
+  skeleton: dynamic(() => import("@/examples/SkeletonExample")),
+  checkbox: dynamic(() => import("@/examples/CheckboxExample")),
+  tooltip: dynamic(() => import("@/examples/TooltipExample")),
+  toast: dynamic(() => import("@/examples/ToastExample")),
+  separator: dynamic(() => import("@/examples/SeparatorExample")),
+  slider: dynamic(() => import("@/examples/SliderExample")),
+  sheet: dynamic(() => import("@/examples/SheetExample")),
+  drawer: dynamic(() => import("@/examples/DrawerExample")),
+  card: dynamic(() => import("@/examples/CardExample")),
+  command: dynamic(() => import("@/examples/CommandExample")),
+  label: dynamic(() => import("@/examples/LabelExample")),
+  dialog: dynamic(() => import("@/examples/DialogExample")),
+  breadcrumb: dynamic(() => import("@/examples/BreadcrumbExample")),
+  empty: dynamic(() => import("@/examples/EmptyExample")),
+  spinner: dynamic(() => import("@/examples/SpinnerExample")),
+  item: dynamic(() => import("@/examples/ItemExample"))
+};
