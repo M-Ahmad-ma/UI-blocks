@@ -43,13 +43,13 @@ export default function Header() {
                 <h2 className="text-lg text-muted-foreground font-semibold mb-4">Navigation</h2>
 
                 <nav className="space-y-2 mb-6">
-                  {["docs", "components", "blocks", "charts", "themes", "colors"].map((link) => (
+                  {["blocks", "Cli"].map((link) => (
                     <Link
                       key={link}
                       href={`/${link}`}
                     >
                       <span className="block text-xl text-foreground hover:text-primary">
-                      {link.charAt(0).toUpperCase() + link.slice(1)}
+                        {link.charAt(0).toUpperCase() + link.slice(1)}
                       </span>
                     </Link>
                   ))}
@@ -59,9 +59,9 @@ export default function Header() {
                 <ul className="space-y-1 max-h-[600px] no-scrollbar overflow-y-auto pr-1">
                   {blocks.map((block) => (
                     <li key={block.id}>
-                        <Button variant="ghost"  onClick={() =>  setSelected(block.id)}  className="block text-foreground  px-2 py-1 rounded hover:bg-transparent border-none text-xl">
+                      <Button variant="ghost" onClick={() => setSelected(block.id)} className="block text-foreground  px-2 py-1 rounded hover:bg-transparent border-none text-xl">
                         {block.title}
-                        </Button>
+                      </Button>
                     </li>
                   ))}
                 </ul>
@@ -78,9 +78,9 @@ export default function Header() {
           </Link>
 
           <nav className="hidden md:flex items-center space-x-5">
-            {["docs", "components", "blocks", "charts", "themes", "colors"].map((link) => (
+            {["blocks", "Cli"].map((link) => (
               <Link key={link} href={`/${link}`}>
-                <span className="text-primary capitalize">{link}</span>
+                <span className="text-primary capitalize cursor-pointer">{link}</span>
               </Link>
             ))}
           </nav>

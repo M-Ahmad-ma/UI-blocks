@@ -6,7 +6,7 @@ import {
   CodeBlock
 } from "@/lib/utils/imports";
 import { cn } from "@/lib/utils/cn"
-import {Button} from "@/components/ui/Button"
+import { Button } from "@/components/ui/Button"
 
 interface PreviewBlockProps {
   title?: string;
@@ -63,7 +63,7 @@ export function BlockPreview({
             {preview}
           </div>
         ) : (
-         <CodeBlock code={code} /> 
+          <CodeBlock code={code} />
         )}
       </motion.div>
     </div>

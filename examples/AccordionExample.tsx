@@ -22,7 +22,7 @@ Key features include advanced processing capabilities, and an intuitive user int
   ];
 
   return (
-    <div className="w-full ">
+    <div className="w-full">
       <Accordion items={items} defaultOpenId="item-1" />
     </div>
   );

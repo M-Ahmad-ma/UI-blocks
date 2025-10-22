@@ -31,7 +31,7 @@ export default function ComponentsPage() {
   const [dependency, setDependency] = useState<string>("");
   const { state: expanded, toggle: toggleExpand } = useToggle(false);
   const { toast: localToast, dismiss } = useToast();
-  const { copied, copyToClipboard } = useCopy()
+  const { copied, copyToClipboard } = useCopy();
 
   useEffect(() => {
     async function fetchBlockCode() {
@@ -63,11 +63,11 @@ export default function ComponentsPage() {
       const cleanedBlocks = data.blocks.map((b: any) => ({
         ...b,
         usage: Array.isArray(b.usage)
-        ? b.usage.map((u: string) => u.replace(/\\n/g, "\n"))
-        : b.usage,
+          ? b.usage.map((u: string) => u.replace(/\\n/g, "\n"))
+          : b.usage,
       }));
 
-      setBlocks(cleanedBlocks)
+      setBlocks(cleanedBlocks);
 
       if (data.blocks.length > 0) {
         setSelected(data.blocks[0].id);
@@ -113,9 +113,9 @@ export default function ComponentsPage() {
   const Example = selected ? componentExamples[selected.toLowerCase()] : null;
 
 
-console.log("Selected:", selected);
-console.log("Available examples:", Object.keys(componentExamples));
-console.log("Resolved Example:", componentExamples[selected?.toLowerCase()]);
+  console.log("Selected:", selected);
+  console.log("Available examples:", Object.keys(componentExamples));
+  console.log("Resolved Example:", componentExamples[selected?.toLowerCase()]);
 
 
   return (
@@ -148,14 +148,14 @@ console.log("Resolved Example:", componentExamples[selected?.toLowerCase()]);
             </div>
             {Example ? (
               <div className="w-full lg:w-2/3 space-y-6">
-                  <BlockPreview
-                    className="bg-transparent w-full"
-                    title={selected}
-                    preview={ <ErrorBoundary errorComponent={<p className="text-red-500">Example failed to render.</p>}>
-      <Example />
-    </ErrorBoundary>}
-                    code={code}
-                  />   
+                <BlockPreview
+                  className="bg-transparent w-full"
+                  title={selected}
+                  preview={<ErrorBoundary errorComponent={<p className="text-red-500">Example failed to render.</p>}>
+                    <Example />
+                  </ErrorBoundary>}
+                  code={code}
+                />
                 <Badge variant='ghost' id="installation" className="text-2xl text-primary mb-1">Installation</Badge>
 
                 <div className="mb-0">
@@ -168,17 +168,17 @@ console.log("Resolved Example:", componentExamples[selected?.toLowerCase()]);
                 </div>
                 <div className=" dark:bg-accent/30 bg-accent rounded-lg">
                   <div className="flex relative items-center gap-3 p-1">
-                      <Tooltip onClick={() => {
-                              copyToClipboard(`npm install ${selected}`)
-                              localToast({
-                                title: "copied",
-                                variant: "success",
-                                duration: 4000,
-                              })
-                            }} content="copie to clipboard" toolClassName="absolute right-3" className="text-muted">
-                        <Clipboard className="w-5 h-6 cursor-pointer text-muted-foreground"/>
-                      </Tooltip>
-                    <Terminal className="w-6 h-6 p-1 ml-5 bg-primary text-muted" />
+                    <Tooltip onClick={() => {
+                      copyToClipboard(`npm install ${selected}`);
+                      localToast({
+                        title: "copied",
+                        variant: "success",
+                        duration: 4000,
+                      });
+                    }} content="copie to clipboard" toolClassName="absolute right-3" className="text-muted">
+                      <Clipboard className="w-5 h-6 cursor-pointer text-muted-foreground" />
+                    </Tooltip>
+                    <Terminal className="w-5 h-5 p-1 ml-5 bg-primary text-muted" />
                     <Badge variant="ghost">npm</Badge>
                   </div>
                   <Separator className="w-full h-3 text-primary" />
@@ -186,7 +186,7 @@ console.log("Resolved Example:", componentExamples[selected?.toLowerCase()]);
                   {cli ? (
                     <pre className="rounded-lg p-2 overflow-x-auto">
                       <code className="language-bash">
-                        {`node tools/cli/index.js ${selected}`}
+                        {`npx @zenblockz/ui-blocks add ${selected}`}
                       </code>
                     </pre>
                   ) : (
@@ -218,13 +218,13 @@ console.log("Resolved Example:", componentExamples[selected?.toLowerCase()]);
                         <Tooltip content='copie to clipboard' className="text-muted">
                           <Clipboard
                             onClick={() => {
-                              copyToClipboard(CompCode)
+                              copyToClipboard(CompCode);
                               localToast({
                                 title: "copied",
                                 description: "code is copied",
                                 variant: "success",
                                 duration: 4000,
-                              })
+                              });
                             }
                             }
                             className="text-muted-foreground w-5 h-5 cursor-pointer"
@@ -250,34 +250,34 @@ console.log("Resolved Example:", componentExamples[selected?.toLowerCase()]);
                   </div>
                 )}
 
-                
-{usage && usage.length > 0 && (
-  <>
-    <Badge variant='ghost' className="text-2xl mb-3" id="usage">Usage</Badge>
-      {usage.map((item: string, index: number) => (
-     <div className="p-2 relative no-scrollbar rounded-lg bg-accent dark:bg-accent/30 text-code-foreground">
-                      <Tooltip content='copie to clipboard' toolClassName='absolute right-3 ,' className="text-muted">
+
+                {usage && usage.length > 0 && (
+                  <>
+                    <Badge variant='ghost' className="text-2xl mb-3" id="usage">Usage</Badge>
+                    {usage.map((item: string, index: number) => (
+                      <div className="p-2 relative no-scrollbar rounded-lg bg-accent dark:bg-accent/30 text-code-foreground">
+                        <Tooltip content='copie to clipboard' toolClassName='absolute right-3 ,' className="text-muted">
                           <Clipboard
                             onClick={() => {
-                              copyToClipboard(usage[index])
+                              copyToClipboard(usage[index]);
                               localToast({
                                 title: "copied",
                                 description: "copied",
                                 variant: "success",
                                 duration: 4000,
-                              })
+                              });
                             }
                             }
                             className="text-muted-foreground w-5 h-5 cursor-pointer"
                           />
                         </Tooltip>
-        <pre key={index} className="whitespace-pre-wrap no-scrollbar bg-transparent text-sm mb-2">
-          <code className="language-tsx">{item}</code>
-        </pre>
-    </div>
-      ))}
-  </>
-)}
+                        <pre key={index} className="whitespace-pre-wrap no-scrollbar bg-transparent text-sm mb-2">
+                          <code className="language-tsx">{item}</code>
+                        </pre>
+                      </div>
+                    ))}
+                  </>
+                )}
 
               </div>
             ) : (
@@ -288,15 +288,15 @@ console.log("Resolved Example:", componentExamples[selected?.toLowerCase()]);
           <p className="text-gray-500">Select a component from the sidebar.</p>
         )}
       </div>
-     
-<div className="hidden md:block flex-shrink-0 w-64 p-5 bg-background text-muted-foreground">
-  <h4 className="text-lg font-semibold">On this page</h4>
-  <div className="mt-3 space-y-2">
-    <a href="#installation" className="hover:underline">Installation</a>
-    <br />
-    <a href="#usage" className="hover:underline">Usage</a>
-  </div>
-</div>
+
+      <div className="hidden md:block flex-shrink-0 w-64 p-5 bg-background text-muted-foreground">
+        <h4 className="text-lg font-semibold">On this page</h4>
+        <div className="mt-3 space-y-2">
+          <a href="#installation" className="hover:underline">Installation</a>
+          <br />
+          <a href="#usage" className="hover:underline">Usage</a>
+        </div>
+      </div>
 
     </div>
   );

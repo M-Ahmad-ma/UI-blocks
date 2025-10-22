@@ -21,15 +21,15 @@ export default function RootLayout({
       <body className="fixed w-full h-screen bg-zinc-950 ">
 
         <ComponentProvider>
-           <ErrorBoundary errorComponent={GlobalError}>
+          <ErrorBoundary errorComponent={GlobalError}>
 
-          <ToastProviderBinder position="top-right">
-            <Header />
-            <div className="bg-background text-primary max-w-9xl w-full">
-              {children}
-            </div>
-          </ToastProviderBinder>
-           </ErrorBoundary>
+            <ToastProviderBinder position="top-right">
+              <Header />
+              <div className="bg-background text-primary max-w-9xl w-full">
+                {children}
+              </div>
+            </ToastProviderBinder>
+          </ErrorBoundary>
         </ComponentProvider>
       </body>
     </html>

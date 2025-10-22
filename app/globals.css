@@ -51,15 +51,7 @@
   --code-foreground: oklch(20% 0 0);
 }
 
-a {
-  color: var(--primary);
-  cursor: pointer;
-  text-decoration: inherit;
-}
 
-a:hover {
-  color: var(--color-muted-foreground);
-}
 
 body {
   margin: 0;
@@ -178,9 +170,9 @@ body {
 
 
 .no-scrollbar {
-  scrollbar-width: none; 
-  -ms-overflow-style: none; 
-  overflow: auto; 
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  overflow: auto;
 }
 
 .no-scrollbar::-webkit-scrollbar {
@@ -197,4 +189,12 @@ pre[class*="language-"] {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
+::selection {
+  background: white;
+  color: black;
+}
 
+::-moz-selection {
+  background: white;
+  color: black;
+}
