@@ -26,12 +26,12 @@ export default function ComponentsPage() {
   const [CompCode, setCompcode] = useState<string>("");
   const [code, setCode] = useState<string>("");
   const [details, setDetails] = useState<string>("");
-  const [usage, setUsage] = useState<string>("");
+  const [usage, setUsage] = useState<string[]>([]);
   const [cli, setCli] = useState<boolean>(true);
   const [dependency, setDependency] = useState<string>("");
   const { state: expanded, toggle: toggleExpand } = useToggle(false);
-  const { toast: localToast, dismiss } = useToast();
-  const { copied, copyToClipboard } = useCopy();
+  const { toast: localToast } = useToast();
+  const { copyToClipboard } = useCopy();
 
   useEffect(() => {
     async function fetchBlockCode() {
@@ -112,10 +112,6 @@ export default function ComponentsPage() {
 
   const Example = selected ? componentExamples[selected.toLowerCase()] : null;
 
-
-  console.log("Selected:", selected);
-  console.log("Available examples:", Object.keys(componentExamples));
-  console.log("Resolved Example:", componentExamples[selected?.toLowerCase()]);
 
 
   return (
@@ -255,7 +251,7 @@ export default function ComponentsPage() {
                   <>
                     <Badge variant='ghost' className="text-2xl mb-3" id="usage">Usage</Badge>
                     {usage.map((item: string, index: number) => (
-                      <div className="p-2 relative no-scrollbar rounded-lg bg-accent dark:bg-accent/30 text-code-foreground">
+                      <div key={index} className="p-2 relative no-scrollbar rounded-lg bg-accent dark:bg-accent/30 text-code-foreground">
                         <Tooltip content='copie to clipboard' toolClassName='absolute right-3 ,' className="text-muted">
                           <Clipboard
                             onClick={() => {
