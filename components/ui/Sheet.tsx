@@ -1,9 +1,8 @@
-
 "use client";
 
 import React, { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, Variants } from "framer-motion";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 
@@ -53,7 +52,6 @@ export function Sheet({
         document.body.style.overflow = prev;
       };
     }
-    return;
   }, [open]);
 
   useEffect(() => {
@@ -74,7 +72,6 @@ export function Sheet({
       if (e.key === "Escape") {
         onOpenChange(false);
       } else if (e.key === "Tab") {
-        // basic focus trap
         const container = panelRef.current;
         if (!container) return;
         const focusable = getFocusableElements(container);
@@ -114,6 +111,7 @@ export function Sheet({
     lg: "w-[36rem]",
     full: "w-full",
   };
+
   const verticalSize: Record<Size, string> = {
     sm: "h-48",
     md: "h-64",
@@ -128,29 +126,16 @@ export function Sheet({
     bottom: cn("bottom-0 left-0 w-full", verticalSize[size]),
   } as const;
 
-  const variants = {
-    overlay: {
-      hidden: { opacity: 0 },
-      visible: { opacity: 1 },
-    },
-    panel: {
-      right: {
-        hidden: { x: "100%" },
-        visible: { x: 0 },
-      },
-      left: {
-        hidden: { x: "-100%" },
-        visible: { x: 0 },
-      },
-      top: {
-        hidden: { y: "-100%" },
-        visible: { y: 0 },
-      },
-      bottom: {
-        hidden: { y: "100%" },
-        visible: { y: 0 },
-      },
-    } as any,
+  const overlayVariants: Variants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1 },
+  };
+
+  const panelVariants: Record<Position, Variants> = {
+    right: { hidden: { x: "100%" }, visible: { x: 0 } },
+    left: { hidden: { x: "-100%" }, visible: { x: 0 } },
+    top: { hidden: { y: "-100%" }, visible: { y: 0 } },
+    bottom: { hidden: { y: "100%" }, visible: { y: 0 } },
   };
 
   return createPortal(
@@ -165,10 +150,8 @@ export function Sheet({
             initial="hidden"
             animate="visible"
             exit="hidden"
-            variants={variants.overlay}
-            onClick={() => {
-              if (closeOnOverlayClick) onOpenChange(false);
-            }}
+            variants={overlayVariants}
+            onClick={() => closeOnOverlayClick && onOpenChange(false)}
             style={{ pointerEvents: "auto" }}
             aria-hidden
           />
@@ -181,7 +164,7 @@ export function Sheet({
             initial="hidden"
             animate="visible"
             exit="hidden"
-            variants={variants.panel[position]}
+            variants={panelVariants[position]}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
             style={{ pointerEvents: "auto" }}
           >
@@ -218,9 +201,23 @@ export function Sheet({
 
 export default Sheet;
 
-export function SheetHeader({ children, className }: { children?: React.ReactNode; className?: string }) {
+export function SheetHeader({
+  children,
+  className,
+}: {
+  children?: React.ReactNode;
+  className?: string;
+}) {
   return <div className={cn("mb-4 flex items-start justify-between gap-4", className)}>{children}</div>;
 }
-export function SheetFooter({ children, className }: { children?: React.ReactNode; className?: string }) {
+
+export function SheetFooter({
+  children,
+  className,
+}: {
+  children?: React.ReactNode;
+  className?: string;
+}) {
   return <div className={cn("mt-auto pt-4", className)}>{children}</div>;
 }
+

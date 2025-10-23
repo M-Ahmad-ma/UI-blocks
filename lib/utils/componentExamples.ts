@@ -1,6 +1,7 @@
 import dynamic from "next/dynamic";
+import type { ComponentType } from "react";
 
-export const componentExamples: Record<string, any> = {
+export const componentExamples: Record<string, ComponentType<any>> = {
   button: dynamic(() => import("@/examples/ButtonExample")),
   input: dynamic(() => import("@/examples/InputExample")),
   alert: dynamic(() => import("@/examples/AlertExample")),
@@ -27,5 +28,6 @@ export const componentExamples: Record<string, any> = {
   breadcrumb: dynamic(() => import("@/examples/BreadcrumbExample")),
   empty: dynamic(() => import("@/examples/EmptyExample")),
   spinner: dynamic(() => import("@/examples/SpinnerExample")),
-  item: dynamic(() => import("@/examples/ItemExample"))
+  item: dynamic(() => import("@/examples/ItemExample")),
 };
+
