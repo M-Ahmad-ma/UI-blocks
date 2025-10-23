@@ -5,12 +5,13 @@ import Link from "next/link"
 import { Sheet } from "@/components/ui/Sheet"
 import { Button } from "@/components/ui/Button"
 import { useComponentContext } from "@/Context/ComponentContext";
+import { Block } from "@/types"
 
 export default function Header() {
   const [darkMode, setDarkMode] = useState(true)
   const [open, setOpen] = useState(false)
   const { setSelected } = useComponentContext();
-  const [blocks, setBlocks] = useState<any[]>([])
+  const [blocks, setBlocks] = useState<Block[]>([])
 
   useEffect(() => {
     if (darkMode) {

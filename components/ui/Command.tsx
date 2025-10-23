@@ -4,11 +4,8 @@ import * as React from "react"
 import { SearchIcon } from "lucide-react"
 import { cn } from "@/lib/utils/cn"
 
-// ------------------ Root Command ------------------
-interface CommandProps extends React.HTMLAttributes<HTMLDivElement> {
-  children: React.ReactNode
-  className?: string
-}
+type CommandProps = React.HTMLAttributes<HTMLDivElement>
+
 const Command = React.forwardRef<HTMLDivElement, CommandProps>(
   ({ className, ...props }, ref) => (
     <div
@@ -22,12 +19,10 @@ const Command = React.forwardRef<HTMLDivElement, CommandProps>(
     />
   )
 )
-Command.displayName = "Command"   
+Command.displayName = "Command"
 
-// ------------------ Command Input ------------------
-interface CommandInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  className?: string
-}
+type CommandInputProps = React.InputHTMLAttributes<HTMLInputElement>
+
 const CommandInput = React.forwardRef<HTMLInputElement, CommandInputProps>(
   ({ className, ...props }, ref) => (
     <div data-slot="command-input-wrapper" className="flex h-10 items-center gap-2 border-b px-3">
@@ -46,8 +41,8 @@ const CommandInput = React.forwardRef<HTMLInputElement, CommandInputProps>(
 )
 CommandInput.displayName = "CommandInput"
 
-// ------------------ Command List ------------------
-interface CommandListProps extends React.HTMLAttributes<HTMLUListElement> {}
+type CommandListProps = React.HTMLAttributes<HTMLUListElement>
+
 const CommandList = React.forwardRef<HTMLUListElement, CommandListProps>(
   ({ className, ...props }, ref) => (
     <ul
@@ -60,14 +55,11 @@ const CommandList = React.forwardRef<HTMLUListElement, CommandListProps>(
 )
 CommandList.displayName = "CommandList"
 
-// ------------------ Command Empty ------------------
-const CommandEmpty: React.FC<React.HTMLAttributes<HTMLDivElement>> = (props) => (
+const CommandEmpty = (props: React.HTMLAttributes<HTMLDivElement>) => (
   <div data-slot="command-empty" className="py-6 text-center text-sm text-gray-500" {...props} />
 )
 
-// ------------------ Command Group ------------------
-interface CommandGroupProps extends React.HTMLAttributes<HTMLDivElement> {}
-const CommandGroup = React.forwardRef<HTMLDivElement, CommandGroupProps>(
+const CommandGroup = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
     <div
       ref={ref}
@@ -82,10 +74,8 @@ const CommandGroup = React.forwardRef<HTMLDivElement, CommandGroupProps>(
 )
 CommandGroup.displayName = "CommandGroup"
 
-// ------------------ Command Item ------------------
-interface CommandItemProps extends React.LiHTMLAttributes<HTMLLIElement> {
-  selected?: boolean
-}
+type CommandItemProps = React.LiHTMLAttributes<HTMLLIElement> & { selected?: boolean }
+
 const CommandItem = React.forwardRef<HTMLLIElement, CommandItemProps>(
   ({ className, selected, ...props }, ref) => (
     <li
@@ -102,14 +92,12 @@ const CommandItem = React.forwardRef<HTMLLIElement, CommandItemProps>(
 )
 CommandItem.displayName = "CommandItem"
 
-// ------------------ Command Shortcut ------------------
-const CommandShortcut: React.FC<React.HTMLAttributes<HTMLSpanElement>> = ({ className, ...props }) => (
-  <span data-slot="command-shortcut" className={cn("ml-auto text-xs text-gray-400", className)} {...props} />
+const CommandShortcut = (props: React.HTMLAttributes<HTMLSpanElement>) => (
+  <span data-slot="command-shortcut" className={cn("ml-auto text-xs text-gray-400", props.className)} {...props} />
 )
 
-// ------------------ Command Separator ------------------
-const CommandSeparator: React.FC<React.HTMLAttributes<HTMLHRElement>> = ({ className, ...props }) => (
-  <hr data-slot="command-separator" className={cn("bg-gray-200 -mx-1 h-px", className)} {...props} />
+const CommandSeparator = (props: React.HTMLAttributes<HTMLHRElement>) => (
+  <hr data-slot="command-separator" className={cn("bg-gray-200 -mx-1 h-px", props.className)} {...props} />
 )
 
 export {
@@ -122,3 +110,4 @@ export {
   CommandShortcut,
   CommandSeparator,
 }
+

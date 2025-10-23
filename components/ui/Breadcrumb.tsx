@@ -1,22 +1,22 @@
 
-"use client"
+"use client";
 
-import * as React from "react"
-import { ChevronRight, MoreHorizontal } from "lucide-react"
-import { cn } from "@/lib/utils/cn"
+import * as React from "react";
+import { ChevronRight, MoreHorizontal } from "lucide-react";
+import { cn } from "@/lib/utils/cn";
 
-interface BreadcrumbProps extends React.HTMLAttributes<HTMLElement> {
-  separator?: React.ReactNode
-}
+type BreadcrumbProps = React.HTMLAttributes<HTMLElement> & {
+  separator?: React.ReactNode;
+};
 
-function Breadcrumb({
+export function Breadcrumb({
   separator = <ChevronRight className="h-4 w-4" />,
   className,
   children,
   ...props
 }: BreadcrumbProps) {
-  const items = React.Children.toArray(children)
-  const lastIndex = items.length - 1
+  const items = React.Children.toArray(children);
+  const lastIndex = items.length - 1;
 
   return (
     <nav
@@ -41,16 +41,15 @@ function Breadcrumb({
         ))}
       </ol>
     </nav>
-  )
+  );
 }
 
-interface BreadcrumbLinkProps
-  extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
-  isCurrent?: boolean
-  asChild?: boolean
-}
+type BreadcrumbLinkProps = React.AnchorHTMLAttributes<HTMLAnchorElement> & {
+  isCurrent?: boolean;
+  asChild?: boolean;
+};
 
-function BreadcrumbLink({
+export function BreadcrumbLink({
   isCurrent,
   asChild,
   className,
@@ -65,18 +64,19 @@ function BreadcrumbLink({
       >
         {children}
       </span>
-    )
+    );
   }
 
   if (asChild && React.isValidElement(children)) {
-    return React.cloneElement(children as React.ReactElement, {
+    const childElement = children as React.ReactElement<React.HTMLAttributes<HTMLElement>>;
+    return React.cloneElement(childElement, {
       className: cn(
         "hover:text-foreground transition-colors text-muted-foreground",
-        (children as any).props?.className,
+        childElement.props.className,
         className
       ),
       ...props,
-    })
+    });
   }
 
   return (
@@ -89,20 +89,20 @@ function BreadcrumbLink({
     >
       {children}
     </a>
-  )
+  );
 }
 
-function BreadcrumbEllipsis({ className }: React.HTMLAttributes<HTMLSpanElement>) {
+export function BreadcrumbEllipsis({ className, ...props }: React.HTMLAttributes<HTMLSpanElement>) {
   return (
     <span
       role="presentation"
       aria-hidden="true"
       className={cn("flex size-6 items-center justify-center", className)}
+      {...props}
     >
       <MoreHorizontal className="h-4 w-4" />
       <span className="sr-only">More</span>
     </span>
-  )
+  );
 }
 
-export { Breadcrumb, BreadcrumbLink, BreadcrumbEllipsis }

@@ -26,18 +26,17 @@ export function Dialog({ children }: { children: React.ReactNode }) {
   )
 }
 
-export function DialogTrigger({
-  asChild,
-  children,
-}: {
+type DialogTriggerProps = {
   asChild?: boolean
   children: React.ReactNode
-}) {
+}
+
+export function DialogTrigger({ asChild, children }: DialogTriggerProps) {
   const { setOpen } = useDialogContext()
 
   if (asChild && React.isValidElement(children)) {
-    return React.cloneElement(children as React.ReactElement<any>, {
-      onClick: (e: any) => {
+    return React.cloneElement(children as React.ReactElement<object>, {
+      onClick: (e: React.MouseEvent) => {
         children.props?.onClick?.(e)
         setOpen(true)
       },
@@ -51,28 +50,30 @@ export function DialogTrigger({
   )
 }
 
-export function DialogOverlay({
-  className,
-}: React.HTMLAttributes<HTMLDivElement>) {
+export function DialogOverlay(props: React.HTMLAttributes<HTMLDivElement>) {
+  const { className, ...rest } = props
   return (
     <div
       className={cn(
         "fixed inset-0 z-40 bg-black/50 animate-in fade-in-0",
         className
       )}
+      {...rest}
     />
   )
+}
+
+interface DialogContentProps {
+  children: React.ReactNode
+  className?: string
+  showCloseButton?: boolean
 }
 
 export function DialogContent({
   children,
   className,
   showCloseButton = true,
-}: {
-  children: React.ReactNode
-  className?: string
-  showCloseButton?: boolean
-}) {
+}: DialogContentProps) {
   const { open, setOpen } = useDialogContext()
   if (!open) return null
 
@@ -87,7 +88,7 @@ export function DialogContent({
       >
         {children}
         {showCloseButton && (
-          <DialogClose className="absolute top-4 right-4" asChild={false}>
+          <DialogClose className="absolute top-4 right-4">
             <XIcon className="h-4 w-4" />
           </DialogClose>
         )}
@@ -96,21 +97,24 @@ export function DialogContent({
   )
 }
 
+type DialogCloseProps = {
+  asChild?: boolean
+  children?: React.ReactNode
+  className?: string
+} & React.ButtonHTMLAttributes<HTMLButtonElement>
+
 export function DialogClose({
   asChild,
   children,
   className,
   ...props
-}: {
-  asChild?: boolean
-  children?: React.ReactNode
-} & React.ButtonHTMLAttributes<HTMLButtonElement>) {
+}: DialogCloseProps) {
   const { setOpen } = useDialogContext()
 
   if (asChild && React.isValidElement(children)) {
-    return React.cloneElement(children as React.ReactElement<any>, {
+    return React.cloneElement(children as React.ReactElement<object>, {
       ...props,
-      onClick: (e: any) => {
+      onClick: (e: React.MouseEvent) => {
         children.props?.onClick?.(e)
         setOpen(false)
       },
@@ -137,7 +141,10 @@ export function DialogHeader({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={cn("flex flex-col gap-2 text-center sm:text-left", className)} {...props} />
+    <div
+      className={cn("flex flex-col gap-2 text-center sm:text-left", className)}
+      {...props}
+    />
   )
 }
 
@@ -173,3 +180,4 @@ export function DialogDescription({
     <p className={cn("text-sm text-muted-foreground", className)} {...props} />
   )
 }
+
