@@ -119,21 +119,18 @@ export default function ComponentsPage() {
     fetchExampleCode();
   }, [selected]);
 
-  // Highlight code
   useEffect(() => {
     Prism.highlightAll();
   }, [code, CompCode, usage, cli]);
 
-
+  // ✅ Strongly type-safe fix (no `any`)
   type ExampleName = keyof typeof componentExamples;
-
-  const selectedLower = selected?.toLowerCase() as string;
+  const selectedLower = selected?.toLowerCase();
 
   const Example =
-    selectedLower && selectedLower in componentExamples
+    selectedLower && (Object.keys(componentExamples) as string[]).includes(selectedLower)
       ? componentExamples[selectedLower as ExampleName]
       : null;
-
 
   return (
     <div className="flex h-screen">
@@ -155,11 +152,9 @@ export default function ComponentsPage() {
         </ul>
       </div>
 
-      {/* Main Content */}
       <div className="flex-1 mx-auto overflow-y-auto no-scrollbar mb-10">
         {selected ? (
           <div className="flex flex-col items-center justify-center rounded-lg p-6 shadow">
-            {/* Component title & description */}
             <div className="flex flex-col items-start justify-start lg:w-2/3 md:w-full w-full mb-6">
               <h1 className="text-4xl font-bold capitalize mb-2">{selected}</h1>
               <p className="text-muted-foreground">{details}</p>
