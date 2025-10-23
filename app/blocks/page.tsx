@@ -166,7 +166,7 @@ export default function ComponentsPage() {
                   className="bg-transparent w-full"
                   title={selected}
                   preview={
-                    <ErrorBoundary errorComponent={<p className="text-red-500">Example failed to render.</p>}>
+                    <ErrorBoundary errorComponent={() => <p className="text-red-500">Example failed to render.</p>}>
                       <Example />
                     </ErrorBoundary>
                   }
