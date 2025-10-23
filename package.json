@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@netlify/plugin-nextjs": "^5.14.3",
     "@tailwindcss/postcss": "^4",
     "@types/babel__standalone": "^7.1.9",
     "@types/node": "^20",
