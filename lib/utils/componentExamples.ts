@@ -1,33 +1,47 @@
-import dynamic from "next/dynamic";
-import type { ComponentType } from "react";
 
-export const componentExamples: Record<string, ComponentType<any>> = {
-  button: dynamic(() => import("@/examples/ButtonExample")),
-  input: dynamic(() => import("@/examples/InputExample")),
-  alert: dynamic(() => import("@/examples/AlertExample")),
-  accordion: dynamic(() => import("@/examples/AccordionExample")),
-  alertdialog: dynamic(() => import("@/examples/AlertDialogExample")),
-  badge: dynamic(() => import("@/examples/BadgeExample")),
-  hovercard: dynamic(() => import("@/examples/HoverCardExample")),
-  aspectratio: dynamic(() => import("@/examples/AspectRatioExample")),
-  textarea: dynamic(() => import("@/examples/TextAreaExample")),
-  select: dynamic(() => import("@/examples/SelectExample")),
-  radiogroup: dynamic(() => import("@/examples/RadioGroupExample")),
-  skeleton: dynamic(() => import("@/examples/SkeletonExample")),
-  checkbox: dynamic(() => import("@/examples/CheckboxExample")),
-  tooltip: dynamic(() => import("@/examples/TooltipExample")),
-  toast: dynamic(() => import("@/examples/ToastExample")),
-  separator: dynamic(() => import("@/examples/SeparatorExample")),
-  slider: dynamic(() => import("@/examples/SliderExample")),
-  sheet: dynamic(() => import("@/examples/SheetExample")),
-  drawer: dynamic(() => import("@/examples/DrawerExample")),
-  card: dynamic(() => import("@/examples/CardExample")),
-  command: dynamic(() => import("@/examples/CommandExample")),
-  label: dynamic(() => import("@/examples/LabelExample")),
-  dialog: dynamic(() => import("@/examples/DialogExample")),
-  breadcrumb: dynamic(() => import("@/examples/BreadcrumbExample")),
-  empty: dynamic(() => import("@/examples/EmptyExample")),
-  spinner: dynamic(() => import("@/examples/SpinnerExample")),
-  item: dynamic(() => import("@/examples/ItemExample")),
-};
+import dynamic, {
+  type DynamicOptions,
+  type Loader,
+  type LoadableComponent,
+} from "next/dynamic";
+import type { FC } from "react";
+
+type ExampleComponent = FC<Record<string, unknown>>;
+
+function dynamicExample<T extends ExampleComponent>(
+  loader: Loader<T>,
+  options?: DynamicOptions<T>
+): LoadableComponent<T> {
+  return dynamic<T>(loader, options);
+}
+
+export const componentExamples = {
+  button: dynamicExample(() => import("@/examples/ButtonExample")),
+  input: dynamicExample(() => import("@/examples/InputExample")),
+  alert: dynamicExample(() => import("@/examples/AlertExample")),
+  accordion: dynamicExample(() => import("@/examples/AccordionExample")),
+  alertdialog: dynamicExample(() => import("@/examples/AlertDialogExample")),
+  badge: dynamicExample(() => import("@/examples/BadgeExample")),
+  hovercard: dynamicExample(() => import("@/examples/HoverCardExample")),
+  aspectratio: dynamicExample(() => import("@/examples/AspectRatioExample")),
+  textarea: dynamicExample(() => import("@/examples/TextAreaExample")),
+  select: dynamicExample(() => import("@/examples/SelectExample")),
+  radiogroup: dynamicExample(() => import("@/examples/RadioGroupExample")),
+  skeleton: dynamicExample(() => import("@/examples/SkeletonExample")),
+  checkbox: dynamicExample(() => import("@/examples/CheckboxExample")),
+  tooltip: dynamicExample(() => import("@/examples/TooltipExample")),
+  toast: dynamicExample(() => import("@/examples/ToastExample")),
+  separator: dynamicExample(() => import("@/examples/SeparatorExample")),
+  slider: dynamicExample(() => import("@/examples/SliderExample")),
+  sheet: dynamicExample(() => import("@/examples/SheetExample")),
+  drawer: dynamicExample(() => import("@/examples/DrawerExample")),
+  card: dynamicExample(() => import("@/examples/CardExample")),
+  command: dynamicExample(() => import("@/examples/CommandExample")),
+  label: dynamicExample(() => import("@/examples/LabelExample")),
+  dialog: dynamicExample(() => import("@/examples/DialogExample")),
+  breadcrumb: dynamicExample(() => import("@/examples/BreadcrumbExample")),
+  empty: dynamicExample(() => import("@/examples/EmptyExample")),
+  spinner: dynamicExample(() => import("@/examples/SpinnerExample")),
+  item: dynamicExample(() => import("@/examples/ItemExample")),
+} as const;
 
