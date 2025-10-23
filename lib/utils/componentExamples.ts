@@ -9,10 +9,9 @@ import type { FC } from "react";
 type ExampleComponent = FC<Record<string, unknown>>;
 
 function dynamicExample<T extends ExampleComponent>(
-  loader: Loader<T>,
-  options?: DynamicOptions<T>
+  loader: Loader<T>
 ): LoadableComponent<T> {
-  return dynamic<T>(loader, options);
+  return dynamic<T>(loader, {});
 }
 
 export const componentExamples = {
