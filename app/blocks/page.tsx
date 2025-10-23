@@ -1,4 +1,3 @@
-
 "use client";
 
 import {
@@ -21,7 +20,7 @@ import {
   useToggle,
 } from "@/lib/utils/imports";
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
-import { ComponentType } from "react";
+import { ComponentType, ReactNode } from "react";
 
 interface Block {
   id: string;
@@ -31,7 +30,9 @@ interface Block {
   dependencies: string[];
 }
 
-type ExampleComponent = ComponentType<Record<string, unknown>>;
+type LoadableComponent = ComponentType<Record<string, unknown>> & {
+  preload?: () => Promise<unknown>;
+};
 
 export default function ComponentsPage() {
   const [blocks, setBlocks] = useState<Block[]>([]);
@@ -129,9 +130,10 @@ export default function ComponentsPage() {
   type ExampleName = keyof typeof componentExamples;
   const selectedLower = selected?.toLowerCase();
 
-  const Example: ExampleComponent | null =
+  // Get the example component with proper typing
+  const ExampleComponent =
     selectedLower && (Object.keys(componentExamples) as string[]).includes(selectedLower)
-      ? (componentExamples[selectedLower as ExampleName] as ExampleComponent)
+      ? componentExamples[selectedLower as ExampleName]
       : null;
 
   return (
@@ -161,21 +163,21 @@ export default function ComponentsPage() {
               <p className="text-muted-foreground">{details}</p>
             </div>
 
-            {Example ? (
+            {ExampleComponent ? (
               <div className="w-full lg:w-2/3 space-y-6">
                 <BlockPreview
                   className="bg-transparent w-full"
                   title={selected}
                   preview={
                     <ErrorBoundary errorComponent={() => <p className="text-red-500">Example failed to render.</p>}>
-                      {/* Fix: Pass empty props object to Example component */}
-                      <Example {...({} as Record<string, unknown>)} />
+                      {/* Use a type-safe approach to render the component */}
+                      <RenderExampleComponent Component={ExampleComponent} />
                     </ErrorBoundary>
                   }
                   code={code}
                 />
 
-                {/* Installation / CLI toggle */}
+                {/* Rest of your component remains the same */}
                 <Badge variant="ghost" id="installation" className="text-2xl text-primary mb-1">
                   Installation
                 </Badge>
@@ -197,7 +199,6 @@ export default function ComponentsPage() {
                   </Button>
                 </div>
 
-                {/* CLI / Manual block */}
                 <div className="dark:bg-accent/30 bg-accent rounded-lg">
                   <div className="flex relative items-center gap-3 p-1">
                     <Tooltip
@@ -231,7 +232,6 @@ export default function ComponentsPage() {
                   ) : null}
                 </div>
 
-                {/* Component source code */}
                 {!cli && (
                   <div
                     className={`dark:bg-accent/30 bg-accent relative overflow-hidden rounded-lg transition-all duration-300`}
@@ -278,7 +278,6 @@ export default function ComponentsPage() {
                   </div>
                 )}
 
-                {/* Usage */}
                 {usage.length > 0 && (
                   <>
                     <Badge variant="ghost" className="text-2xl mb-3" id="usage">
@@ -320,7 +319,6 @@ export default function ComponentsPage() {
         )}
       </div>
 
-      {/* Right Sidebar */}
       <div className="hidden md:block flex-shrink-0 w-64 p-5 bg-background text-muted-foreground">
         <h4 className="text-lg font-semibold">On this page</h4>
         <div className="mt-3 space-y-2">
@@ -335,4 +333,13 @@ export default function ComponentsPage() {
       </div>
     </div>
   );
+}
+
+// Helper component to render the example with proper typing
+function RenderExampleComponent({
+  Component
+}: {
+  Component: ComponentType<Record<string, unknown>>
+}): ReactNode {
+  return <Component {...{}} />;
 }
