@@ -43,7 +43,6 @@ export default function ComponentsPage() {
   const { toast: localToast } = useToast();
   const { copyToClipboard } = useCopy();
 
-  // Fetch selected component code
   useEffect(() => {
     if (!selected) return;
 
@@ -63,7 +62,6 @@ export default function ComponentsPage() {
     fetchBlockCode();
   }, [selected]);
 
-  // Fetch blocks list
   useEffect(() => {
     const fetchBlocks = async () => {
       const res = await fetch(
@@ -94,7 +92,6 @@ export default function ComponentsPage() {
     fetchBlocks();
   }, [setSelected]);
 
-  // Update details when selected changes
   useEffect(() => {
     if (!selected || blocks.length === 0) return;
     const currentBlock = blocks.find((block) => block.id === selected);
@@ -104,7 +101,6 @@ export default function ComponentsPage() {
     setDependency(currentBlock.dependencies.join(" "));
   }, [selected, blocks]);
 
-  // Fetch example code
   useEffect(() => {
     if (!selected) return;
     const fetchExampleCode = async () => {
@@ -128,7 +124,16 @@ export default function ComponentsPage() {
     Prism.highlightAll();
   }, [code, CompCode, usage, cli]);
 
-  const Example = selected ? componentExamples[selected.toLowerCase()] : null;
+
+  type ExampleName = keyof typeof componentExamples;
+
+  const selectedLower = selected?.toLowerCase() as string;
+
+  const Example =
+    selectedLower && selectedLower in componentExamples
+      ? componentExamples[selectedLower as ExampleName]
+      : null;
+
 
   return (
     <div className="flex h-screen">
