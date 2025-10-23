@@ -21,6 +21,7 @@ import {
   useToggle,
 } from "@/lib/utils/imports";
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
+import { ComponentType } from "react";
 
 interface Block {
   id: string;
@@ -29,6 +30,8 @@ interface Block {
   usage: string[];
   dependencies: string[];
 }
+
+type ExampleComponent = ComponentType<Record<string, unknown>>;
 
 export default function ComponentsPage() {
   const [blocks, setBlocks] = useState<Block[]>([]);
@@ -123,18 +126,16 @@ export default function ComponentsPage() {
     Prism.highlightAll();
   }, [code, CompCode, usage, cli]);
 
-  // ✅ Strongly type-safe fix (no `any`)
   type ExampleName = keyof typeof componentExamples;
   const selectedLower = selected?.toLowerCase();
 
-  const Example =
+  const Example: ExampleComponent | null =
     selectedLower && (Object.keys(componentExamples) as string[]).includes(selectedLower)
-      ? componentExamples[selectedLower as ExampleName]
+      ? (componentExamples[selectedLower as ExampleName] as ExampleComponent)
       : null;
 
   return (
     <div className="flex h-screen">
-      {/* Sidebar */}
       <div className="lg:block md:hidden hidden overflow-y-scroll no-scrollbar w-64 bg-transparent p-4">
         <h2 className="text-xl font-bold mb-4">Components</h2>
         <ul className="space-y-1 mb-10">
@@ -167,7 +168,8 @@ export default function ComponentsPage() {
                   title={selected}
                   preview={
                     <ErrorBoundary errorComponent={() => <p className="text-red-500">Example failed to render.</p>}>
-                      <Example />
+                      {/* Fix: Pass empty props object to Example component */}
+                      <Example {...({} as Record<string, unknown>)} />
                     </ErrorBoundary>
                   }
                   code={code}
@@ -334,4 +336,3 @@ export default function ComponentsPage() {
     </div>
   );
 }
-
