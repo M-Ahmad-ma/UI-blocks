@@ -20,7 +20,6 @@ import {
   useToggle,
 } from "@/lib/utils/imports";
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
-import { ComponentType, ReactNode } from "react";
 
 interface Block {
   id: string;
@@ -29,10 +28,6 @@ interface Block {
   usage: string[];
   dependencies: string[];
 }
-
-type LoadableComponent = ComponentType<Record<string, unknown>> & {
-  preload?: () => Promise<unknown>;
-};
 
 export default function ComponentsPage() {
   const [blocks, setBlocks] = useState<Block[]>([]);
@@ -70,7 +65,7 @@ export default function ComponentsPage() {
     const fetchBlocks = async () => {
       const res = await fetch(
         "https://raw.githubusercontent.com/M-Ahmad-ma/ui-registry/main/blocks.json",
-        { cache: "no-store" }
+        { cache: "no-store" },
       );
       const data = await res.json();
 
@@ -111,7 +106,7 @@ export default function ComponentsPage() {
       const fileName = `${toPascalCase(selected)}Example.tsx`;
       try {
         const res = await fetch(
-          `https://raw.githubusercontent.com/M-Ahmad-ma/ui-registry/main/Examples/${fileName}?t=${Date.now()}`
+          `https://raw.githubusercontent.com/M-Ahmad-ma/ui-registry/main/Examples/${fileName}?t=${Date.now()}`,
         );
         if (!res.ok) throw new Error("Code not found");
         const text = await res.text();
@@ -123,21 +118,23 @@ export default function ComponentsPage() {
     fetchExampleCode();
   }, [selected]);
 
+  // Highlight code
   useEffect(() => {
     Prism.highlightAll();
   }, [code, CompCode, usage, cli]);
 
   type ExampleName = keyof typeof componentExamples;
-  const selectedLower = selected?.toLowerCase();
 
-  // Get the example component with proper typing
-  const ExampleComponent =
-    selectedLower && (Object.keys(componentExamples) as string[]).includes(selectedLower)
+  const selectedLower = selected?.toLowerCase() as string;
+
+  const Example =
+    selectedLower && selectedLower in componentExamples
       ? componentExamples[selectedLower as ExampleName]
       : null;
 
   return (
     <div className="flex h-screen">
+      {/* Sidebar */}
       <div className="lg:block md:hidden hidden overflow-y-scroll no-scrollbar w-64 bg-transparent p-4">
         <h2 className="text-xl font-bold mb-4">Components</h2>
         <ul className="space-y-1 mb-10">
@@ -145,8 +142,9 @@ export default function ComponentsPage() {
             <li key={block.id}>
               <button
                 onClick={() => setSelected(block.id)}
-                className={`w-fit text-left px-3 py-2 rounded-md transition ${selected === block.id ? "bg-code text-white" : "hover:bg-code"
-                  }`}
+                className={`w-fit text-left px-3 py-2 rounded-md transition ${
+                  selected === block.id ? "bg-code text-white" : "hover:bg-code"
+                }`}
               >
                 {block.title}
               </button>
@@ -158,27 +156,37 @@ export default function ComponentsPage() {
       <div className="flex-1 mx-auto overflow-y-auto no-scrollbar mb-10">
         {selected ? (
           <div className="flex flex-col items-center justify-center rounded-lg p-6 shadow">
+            {/* Component title & description */}
             <div className="flex flex-col items-start justify-start lg:w-2/3 md:w-full w-full mb-6">
               <h1 className="text-4xl font-bold capitalize mb-2">{selected}</h1>
               <p className="text-muted-foreground">{details}</p>
             </div>
 
-            {ExampleComponent ? (
+            {Example ? (
               <div className="w-full lg:w-2/3 space-y-6">
                 <BlockPreview
                   className="bg-transparent w-full"
                   title={selected}
                   preview={
-                    <ErrorBoundary errorComponent={() => <p className="text-red-500">Example failed to render.</p>}>
-                      {/* Use a type-safe approach to render the component */}
-                      <RenderExampleComponent Component={ExampleComponent} />
+                    <ErrorBoundary
+                      errorComponent={() => (
+                        <p className="text-red-500">
+                          Example failed to render.
+                        </p>
+                      )}
+                    >
+                      <Example />
                     </ErrorBoundary>
                   }
                   code={code}
                 />
 
-                {/* Rest of your component remains the same */}
-                <Badge variant="ghost" id="installation" className="text-2xl text-primary mb-1">
+                {/* Installation / CLI toggle */}
+                <Badge
+                  variant="ghost"
+                  id="installation"
+                  className="text-2xl text-primary mb-1"
+                >
                   Installation
                 </Badge>
 
@@ -199,6 +207,7 @@ export default function ComponentsPage() {
                   </Button>
                 </div>
 
+                {/* CLI / Manual block */}
                 <div className="dark:bg-accent/30 bg-accent rounded-lg">
                   <div className="flex relative items-center gap-3 p-1">
                     <Tooltip
@@ -232,6 +241,7 @@ export default function ComponentsPage() {
                   ) : null}
                 </div>
 
+                {/* Component source code */}
                 {!cli && (
                   <div
                     className={`dark:bg-accent/30 bg-accent relative overflow-hidden rounded-lg transition-all duration-300`}
@@ -240,14 +250,23 @@ export default function ComponentsPage() {
                     <div className="w-full flex items-center justify-between p-3">
                       <div className="flex items-center gap-2">
                         <SiTypescript />
-                        <span className="text-muted-foreground">components/ui/{selected}.tsx</span>
+                        <span className="text-muted-foreground">
+                          components/ui/{selected}.tsx
+                        </span>
                       </div>
                       <div className="flex items-center gap-2">
                         <Badge variant="ghost" onClick={toggleExpand}>
                           {expanded ? "Collapse" : "Expand"}
                         </Badge>
-                        <Separator variant="default" orientation="vertical" className="w-2 h-5" />
-                        <Tooltip content="Copy to clipboard" className="text-muted">
+                        <Separator
+                          variant="default"
+                          orientation="vertical"
+                          className="w-2 h-5"
+                        />
+                        <Tooltip
+                          content="Copy to clipboard"
+                          className="text-muted"
+                        >
                           <Clipboard
                             onClick={() => {
                               copyToClipboard(CompCode);
@@ -270,7 +289,10 @@ export default function ComponentsPage() {
 
                     {!expanded && (
                       <div className="absolute bottom-0 w-full p-2 flex items-center justify-center bg-white/60 dark:bg-gray-900/40 backdrop-blur-md">
-                        <Button onClick={toggleExpand} className="bg-transparent hover:bg-transparent text-primary">
+                        <Button
+                          onClick={toggleExpand}
+                          className="bg-transparent hover:bg-transparent text-primary"
+                        >
                           Expand
                         </Button>
                       </div>
@@ -278,6 +300,7 @@ export default function ComponentsPage() {
                   </div>
                 )}
 
+                {/* Usage */}
                 {usage.length > 0 && (
                   <>
                     <Badge variant="ghost" className="text-2xl mb-3" id="usage">
@@ -288,7 +311,11 @@ export default function ComponentsPage() {
                         key={index}
                         className="p-2 relative no-scrollbar rounded-lg bg-accent dark:bg-accent/30 text-code-foreground"
                       >
-                        <Tooltip content="Copy to clipboard" toolClassName="absolute right-3" className="text-muted">
+                        <Tooltip
+                          content="Copy to clipboard"
+                          toolClassName="absolute right-3"
+                          className="text-muted"
+                        >
                           <Clipboard
                             onClick={() => {
                               copyToClipboard(item);
@@ -319,6 +346,7 @@ export default function ComponentsPage() {
         )}
       </div>
 
+      {/* Right Sidebar */}
       <div className="hidden md:block flex-shrink-0 w-64 p-5 bg-background text-muted-foreground">
         <h4 className="text-lg font-semibold">On this page</h4>
         <div className="mt-3 space-y-2">
@@ -333,13 +361,4 @@ export default function ComponentsPage() {
       </div>
     </div>
   );
-}
-
-// Helper component to render the example with proper typing
-function RenderExampleComponent({
-  Component
-}: {
-  Component: ComponentType<Record<string, unknown>>
-}): ReactNode {
-  return <Component {...{}} />;
 }

@@ -1,17 +1,12 @@
-
-import dynamic, {
-  type DynamicOptions,
-  type Loader,
-  type LoadableComponent,
-} from "next/dynamic";
+import dynamic, { type Loader } from "next/dynamic";
 import type { FC } from "react";
 
 type ExampleComponent = FC<Record<string, unknown>>;
 
-function dynamicExample<T extends ExampleComponent>(
-  loader: Loader<T>
-): LoadableComponent<T> {
-  return dynamic<T>(loader, {});
+function dynamicExample(
+  loader: Loader<ExampleComponent>,
+): React.ComponentType<Record<string, unknown>> {
+  return dynamic(loader, { ssr: false });
 }
 
 export const componentExamples = {
@@ -43,4 +38,3 @@ export const componentExamples = {
   spinner: dynamicExample(() => import("@/examples/SpinnerExample")),
   item: dynamicExample(() => import("@/examples/ItemExample")),
 } as const;
-
