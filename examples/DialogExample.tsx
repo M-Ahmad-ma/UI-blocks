@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/Button"
+import { Button } from "@/components/ui/Button";
 import {
   Dialog,
   DialogClose,
@@ -8,13 +8,12 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/Dialog" 
-import { Input } from "@/components/ui/Input"
-import { Label } from "@/components/ui/Label"
+} from "@/components/ui/Dialog";
+import { Input } from "@/components/ui/Input";
+import { Label } from "@/components/ui/Label";
 
 export default function DialogExample() {
-
-   function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault(); // stop full page refresh
     console.log("Form submitted!");
   }
@@ -23,7 +22,7 @@ export default function DialogExample() {
     <Dialog>
       <form onSubmit={handleSubmit}>
         <DialogTrigger asChild>
-          <Button variant='default'>Open Dialog</Button>
+          <Button variant="default">Open Dialog</Button>
         </DialogTrigger>
 
         <DialogContent className="sm:max-w-[425px]">
@@ -48,12 +47,12 @@ export default function DialogExample() {
 
           <DialogFooter>
             <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
+              <Button variant="secondary">Cancel</Button>
             </DialogClose>
             <Button type="submit">Save changes</Button>
           </DialogFooter>
         </DialogContent>
       </form>
     </Dialog>
-  )
+  );
 }

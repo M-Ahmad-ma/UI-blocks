@@ -118,7 +118,6 @@ export default function ComponentsPage() {
     fetchExampleCode();
   }, [selected]);
 
-  // Highlight code
   useEffect(() => {
     Prism.highlightAll();
   }, [code, CompCode, usage, cli]);

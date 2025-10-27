@@ -51,7 +51,6 @@ const Checkbox = forwardRef<HTMLInputElement, CustomCheckboxProps>(
   ) => {
     const internalRef = useRef<HTMLInputElement>(null);
 
-    // ✅ Sync the forwarded ref
     useEffect(() => {
       if (!ref) return;
       if (typeof ref === "function") {
@@ -62,7 +61,6 @@ const Checkbox = forwardRef<HTMLInputElement, CustomCheckboxProps>(
       }
     }, [ref]);
 
-    // ✅ Handle indeterminate checkbox state
     useEffect(() => {
       if (internalRef.current) {
         internalRef.current.indeterminate = indeterminate;
