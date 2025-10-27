@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
-import { Button } from "@/components/ui/Button"
-import { Input } from "@/components/ui/Input"
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
 import Sheet, { SheetHeader, SheetFooter } from "@/components/ui/Sheet";
 
 export default function SheetExample() {
@@ -9,10 +9,7 @@ export default function SheetExample() {
 
   return (
     <div className="p-8">
-      <Button
-        variant='default'
-        onClick={() => setOpen(true)}
-      >
+      <Button variant="default" onClick={() => setOpen(true)}>
         Open Sheet
       </Button>
 
@@ -26,15 +23,18 @@ export default function SheetExample() {
 
         <div className="space-y-4">
           <p>
-            This is the sheet content. Add forms, settings, or any controls here.
+            This is the sheet content. Add forms, settings, or any controls
+            here.
           </p>
-          <Input  placeholder="Input inside sheet" />
+          <Input placeholder="Input inside sheet" />
           <Button variant="default">Primary action</Button>
         </div>
 
         <SheetFooter>
           <div className="flex justify-end gap-2">
-            <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
+            <Button variant="secondary" onClick={() => setOpen(false)}>
+              Cancel
+            </Button>
             <Button variant="default">Save</Button>
           </div>
         </SheetFooter>

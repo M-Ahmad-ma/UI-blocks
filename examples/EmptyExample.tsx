@@ -1,7 +1,7 @@
 import { FaFolderOpen } from "react-icons/fa6";
-import { ArrowUpRightIcon } from "lucide-react"
+import { ArrowUpRightIcon } from "lucide-react";
 
-import { Button } from "@/components/ui/Button"
+import { Button } from "@/components/ui/Button";
 import {
   Empty,
   EmptyContent,
@@ -9,7 +9,7 @@ import {
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
-} from "@/components/ui/Empty"
+} from "@/components/ui/Empty";
 
 export default function EmptyExample() {
   return (
@@ -27,7 +27,7 @@ export default function EmptyExample() {
       <EmptyContent>
         <div className="flex gap-2">
           <Button>Create Project</Button>
-          <Button variant="outline">Import Project</Button>
+          <Button variant="secondary">Import Project</Button>
         </div>
       </EmptyContent>
       <Button
@@ -41,5 +41,5 @@ export default function EmptyExample() {
         </a>
       </Button>
     </Empty>
-  )
+  );
 }
