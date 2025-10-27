@@ -1,25 +1,27 @@
-import React, { forwardRef, useEffect, useRef } from "react"
-import { Check, Minus } from "lucide-react"
+"use client";
 
-type Size = "sm" | "md" | "lg"
-type Variant = "default" | "ghost" | "accent"
+import React, { forwardRef, useEffect, useRef } from "react";
+import { Check, Minus } from "lucide-react";
+
+type Size = "sm" | "md" | "lg";
+type Variant = "default" | "ghost" | "accent";
 
 export interface CustomCheckboxProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {
-  label?: React.ReactNode
-  size?: Size
-  variant?: Variant
-  indeterminate?: boolean
-  containerClassName?: string
-  boxClassName?: string
-  iconClassName?: string
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size"> {
+  label?: React.ReactNode;
+  checkSize?: Size;
+  variant?: Variant;
+  indeterminate?: boolean;
+  containerClassName?: string;
+  boxClassName?: string;
+  iconClassName?: string;
 }
 
 const sizeMap: Record<Size, string> = {
   sm: "w-4 h-4",
   md: "w-5 h-5",
   lg: "w-6 h-6",
-}
+};
 
 const variantMap: Record<Variant, string> = {
   default:
@@ -28,7 +30,7 @@ const variantMap: Record<Variant, string> = {
     "bg-transparent border-gray-400 hover:bg-gray-100 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-400",
   accent:
     "bg-indigo-600 border-indigo-600 text-white hover:bg-indigo-700 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500",
-}
+};
 
 const Checkbox = forwardRef<HTMLInputElement, CustomCheckboxProps>(
   (
@@ -38,37 +40,36 @@ const Checkbox = forwardRef<HTMLInputElement, CustomCheckboxProps>(
       containerClassName = "",
       boxClassName = "",
       iconClassName = "",
-      size = "md",
+      checkSize = "md",
       variant = "default",
       indeterminate = false,
       disabled = false,
       children,
       ...rest
     },
-    ref
+    ref,
   ) => {
-    const internalRef = useRef<HTMLInputElement | null>(null)
+    const internalRef = useRef<HTMLInputElement | null>(null);
 
-    // Forward ref correctly
+    // ✅ Sync forwarded ref
     useEffect(() => {
-      if (!ref) return
+      if (!ref) return;
       if (typeof ref === "function") {
-        ref(internalRef.current)
-      } else if (typeof ref === "object" && ref !== null) {
-        (ref as React.MutableRefObject<HTMLInputElement | null>).current =
-          internalRef.current
+        ref(internalRef.current);
+      } else {
+        ref.current = internalRef.current;
       }
-    }, [ref])
+    }, [ref]);
 
-    // Handle indeterminate state
+    // ✅ Set indeterminate state on mount/update
     useEffect(() => {
       if (internalRef.current) {
-        internalRef.current.indeterminate = !!indeterminate
+        internalRef.current.indeterminate = indeterminate;
       }
-    }, [indeterminate])
+    }, [indeterminate]);
 
-    const sizeCls = sizeMap[size]
-    const variantCls = variantMap[variant]
+    const sizeCls = sizeMap[checkSize];
+    const variantCls = variantMap[variant];
 
     return (
       <label
@@ -102,13 +103,13 @@ const Checkbox = forwardRef<HTMLInputElement, CustomCheckboxProps>(
         {label ? (
           <span className="text-sm leading-none">{label}</span>
         ) : (
-          children ?? null
+          (children ?? null)
         )}
       </label>
-    )
-  }
-)
+    );
+  },
+);
 
-Checkbox.displayName = "Checkbox"
+Checkbox.displayName = "Checkbox";
 
-export default Checkbox
+export default Checkbox;
