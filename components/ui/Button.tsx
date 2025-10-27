@@ -36,7 +36,9 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             ? "bg-transparent hover:bg-accent hover:text-accent-foreground"
             : variant === "destructive"
               ? "bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              : "";
+              : variant === "link"
+                ? "text-primary underline-offset-4 hover:underline"
+                : "";
 
     const sizeClasses =
       size === "sm"
