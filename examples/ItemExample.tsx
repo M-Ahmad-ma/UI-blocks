@@ -17,7 +17,7 @@ import { Star } from "lucide-react";
 export default function ItemExample() {
   return (
     <ItemGroup>
-      <Item variant="secondary">
+      <Item variant="muted">
         <ItemHeader>
           <ItemMedia variant="icon">
             <Star />
@@ -32,7 +32,7 @@ export default function ItemExample() {
         </ItemHeader>
       </Item>
 
-      <Item className="my-4" variant="secondary">
+      <Item className="my-4" variant="muted">
         <ItemContent>
           <ItemTitle>Free Tier</ItemTitle>
           <ItemDescription>Limited access to basic tools</ItemDescription>
