@@ -1,5 +1,4 @@
-
-import { Button } from "@/components/ui/Button"
+import { Button } from "@/components/ui/Button";
 import {
   Card,
   CardAction,
@@ -8,8 +7,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/Card"
-import { Input } from "@/components/ui/Input"
+} from "@/components/ui/Card";
+import { Input } from "@/components/ui/Input";
 
 export default function CardExample() {
   return (
@@ -59,5 +58,5 @@ export default function CardExample() {
         </Button>
       </CardFooter>
     </Card>
-  )
+  );
 }
