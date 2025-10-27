@@ -9,15 +9,15 @@ import {
   ItemActions,
   ItemSeparator,
   ItemFooter,
-} from "@/components/ui/Item"
+} from "@/components/ui/Item";
 
-import { Button } from "@/components/ui/Button"
-import { Star } from "lucide-react"
+import { Button } from "@/components/ui/Button";
+import { Star } from "lucide-react";
 
 export default function ItemExample() {
   return (
     <ItemGroup>
-      <Item variant='outline'>
+      <Item variant="secondary">
         <ItemHeader>
           <ItemMedia variant="icon">
             <Star />
@@ -32,13 +32,12 @@ export default function ItemExample() {
         </ItemHeader>
       </Item>
 
-
-      <Item className="my-4" variant="outline">
+      <Item className="my-4" variant="secondary">
         <ItemContent>
           <ItemTitle>Free Tier</ItemTitle>
           <ItemDescription>Limited access to basic tools</ItemDescription>
         </ItemContent>
       </Item>
     </ItemGroup>
-  )
+  );
 }
