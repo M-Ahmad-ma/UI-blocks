@@ -1,32 +1,28 @@
+"use client";
 
-"use client"
-
-import * as React from "react"
-import { cn } from "@/lib/utils/cn"
+import * as React from "react";
+import { cn } from "@/lib/utils/cn";
 
 interface RadioOption {
-  value: string
-  label: string
-  description?: string
+  value: string;
+  label: string;
+  description?: string;
 }
 
-interface RadioGroupProps extends React.HTMLAttributes<HTMLDivElement> {
-  options: RadioOption[]
-  value?: string
-  onChange?: (value: string) => void
-  className?: string
+interface RadioGroupProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange"> {
+  options: RadioOption[];
+  value?: string;
+  onChange?: (value: string) => void;
+  className?: string;
 }
 
 export const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(
   ({ options, value, onChange, className, ...props }, ref) => {
     return (
-      <div
-        ref={ref}
-        className={cn("space-y-2", className)}
-        {...props}
-      >
+      <div ref={ref} className={cn("space-y-2", className)} {...props}>
         {options.map((option) => {
-          const selected = option.value === value
+          const selected = option.value === value;
           return (
             <button
               key={option.value}
@@ -37,7 +33,7 @@ export const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(
                 "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background",
                 selected
                   ? "border-primary bg-primary/5"
-                  : "border-border hover:bg-muted/50"
+                  : "border-border hover:bg-muted/50",
               )}
             >
               <span
@@ -45,7 +41,7 @@ export const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(
                   "mt-1 inline-flex h-4 w-4 items-center justify-center rounded-full border",
                   selected
                     ? "border-primary bg-primary"
-                    : "border-muted-foreground"
+                    : "border-muted-foreground",
                 )}
               >
                 {selected && (
@@ -63,11 +59,11 @@ export const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(
                 )}
               </div>
             </button>
-          )
+          );
         })}
       </div>
-    )
-  }
-)
+    );
+  },
+);
 
-RadioGroup.displayName = "RadioGroup"
+RadioGroup.displayName = "RadioGroup";
