@@ -1,16 +1,14 @@
-
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, createContext, useContext } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils/cn";
-import { createContext, useContext } from "react";
 
 interface HoverCardCtx {
   open: boolean;
   setOpen: (v: boolean) => void;
-  triggerRef: React.RefObject<HTMLDivElement>;
+  triggerRef: React.RefObject<HTMLDivElement | null>;
 }
 
 const HoverCardContext = createContext<HoverCardCtx | null>(null);
@@ -27,7 +25,7 @@ interface HoverCardProps {
 
 export function HoverCard({ children }: HoverCardProps) {
   const [open, setOpen] = useState(false);
-  const triggerRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLDivElement | null>(null);
 
   return (
     <HoverCardContext.Provider value={{ open, setOpen, triggerRef }}>
@@ -42,7 +40,11 @@ interface TriggerProps {
   closeDelay?: number;
 }
 
-function Trigger({ children, openDelay = 150, closeDelay = 150 }: TriggerProps) {
+function Trigger({
+  children,
+  openDelay = 150,
+  closeDelay = 150,
+}: TriggerProps) {
   const { setOpen, triggerRef } = useHoverCard();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -118,7 +120,7 @@ function Content({
           transition={{ duration: 0.15 }}
           className={cn(
             "fixed z-50 rounded-lg border-border bg-primary-foreground shadow-md p-4 text-sm",
-            className
+            className,
           )}
           style={{
             top: position.top,
@@ -133,11 +135,11 @@ function Content({
         </motion.div>
       )}
     </AnimatePresence>,
-    document.body
+    document.body,
   );
 }
 
 HoverCard.Trigger = Trigger;
 HoverCard.Content = Content;
 
-export default { HoverCard }
+export default HoverCard;
