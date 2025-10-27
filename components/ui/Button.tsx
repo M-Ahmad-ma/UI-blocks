@@ -53,18 +53,16 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     );
 
     if (asChild && React.isValidElement(children)) {
-      // Use the child’s inferred props type for strong typing
       type ChildProps =
-        typeof children extends React.ReactElement<infer P>
-          ? P
-          : Record<string, unknown>;
-
+        typeof children extends React.ReactElement<infer P> ? P : never;
       const child = children as React.ReactElement<ChildProps>;
 
       return React.cloneElement(child, {
         ...props,
-        ref,
-        className: cn((child.props as ChildProps).className, combinedClasses),
+        className: cn(
+          (child.props as ChildProps & { className?: string }).className,
+          combinedClasses,
+        ),
       });
     }
 
