@@ -4,7 +4,7 @@ import * as React from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils/cn";
-import { Button } from "@/components/ui/Button";
+import { Button, type ButtonProps } from "@/components/ui/Button";
 
 interface AlertDialogCtx {
   open: boolean;
@@ -57,7 +57,6 @@ export function AlertDialogTrigger({
   const { setOpen } = useAlertDialog();
 
   if (asChild && React.isValidElement(children)) {
-    // ✅ Strongly typed handling for child element
     type ChildElement = React.ReactElement<{
       onClick?: (e: React.MouseEvent) => void;
     }>;
@@ -155,10 +154,7 @@ export function AlertDialogAction({
   children,
   onClick,
   ...props
-}: {
-  children: React.ReactNode;
-  onClick?: () => void;
-}) {
+}: ButtonProps) {
   return (
     <Button
       {...props}
@@ -171,15 +167,16 @@ export function AlertDialogAction({
   );
 }
 
-export function AlertDialogCancel({
-  children,
-  ...props
-}: {
-  children: React.ReactNode;
-}) {
+export function AlertDialogCancel({ children, ...props }: ButtonProps) {
   const { setOpen } = useAlertDialog();
   return (
-    <Button {...props} onClick={() => setOpen(false)}>
+    <Button
+      {...props}
+      onClick={(e) => {
+        props.onClick?.(e);
+        setOpen(false);
+      }}
+    >
       {children}
     </Button>
   );
