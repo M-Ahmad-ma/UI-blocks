@@ -7,7 +7,6 @@ export default function CheckboxExample() {
 
   return (
     <div className="p-6 space-y-4">
-      {/* Controlled checkbox */}
       <Checkbox
         checked={checked}
         onChange={(e) => setChecked(e.target.checked)}
@@ -19,14 +18,12 @@ export default function CheckboxExample() {
         iconClassName="text-indigo-600"
       />
 
-      {/* Indeterminate checkbox */}
       <Checkbox
         indeterminate={true}
         label="Partially selected"
         variant="ghost"
       />
 
-      {/* Accent large checkbox */}
       <Checkbox
         checked={checked2}
         onChange={(e) => setChecked2(e.target.checked)}

@@ -55,7 +55,6 @@ type AsProp<C extends React.ElementType> = {
 
 type PropsToOmit<C extends React.ElementType, P> = keyof (AsProp<C> & P);
 
-// ✅ FIXED: replaced `{}` with `object`
 type PolymorphicComponentProps<
   C extends React.ElementType,
   Props extends object = object,

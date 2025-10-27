@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { ToastProviderBinder, useToast, toast } from "@/components/ui/Toast";
-import { Button } from "@/components/ui/Button"
+import { Button } from "@/components/ui/Button";
 
 function ToastExampleInner() {
   const { toast: localToast, dismiss } = useToast();
@@ -29,7 +29,12 @@ function ToastExampleInner() {
             description: "Something went wrong.",
             variant: "error",
             duration: 5000,
-            action: { label: "Retry", onClick: (id) => { /* do something */ dismiss(id); } },
+            action: {
+              label: "Retry",
+              onClick: (id) => {
+                /* do something */ dismiss(id);
+              },
+            },
           })
         }
       >
@@ -37,9 +42,13 @@ function ToastExampleInner() {
       </Button>
 
       <Button
-        variant="outline"
+        variant="secondary"
         onClick={() =>
-          toast({ title: "Global toast", description: "Triggered via global helper", variant: "info" })
+          toast({
+            title: "Global toast",
+            description: "Triggered via global helper",
+            variant: "info",
+          })
         }
       >
         Global toast()
@@ -48,7 +57,6 @@ function ToastExampleInner() {
   );
 }
 
-/** Wrap example in provider binder so global `toast()` works */
 export default function ToastExample() {
   return (
     <ToastProviderBinder>

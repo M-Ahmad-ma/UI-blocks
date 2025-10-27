@@ -1,7 +1,6 @@
-
 "use client";
 
-import { HoverCard } from "@/components/ui/HoverCard"
+import { HoverCard } from "@/components/ui/HoverCard";
 
 export default function HoverCardExample() {
   return (
@@ -18,7 +17,9 @@ export default function HoverCardExample() {
               className="w-10 h-10 rounded-full"
             />
             <div>
-              <p className="font-medium !text-primary dark:text-primary-foreground">Example User</p>
+              <p className="font-medium !text-primary dark:text-primary-foreground">
+                Example User
+              </p>
               <p className="text-gray-500 text-xs">@example</p>
             </div>
           </div>

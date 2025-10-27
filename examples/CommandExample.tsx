@@ -1,5 +1,5 @@
-import React from "react"
-import CommandDialog from "@/components/ui/CommandDialog"
+import React from "react";
+import CommandDialog from "@/components/ui/CommandDialog";
 
 export default function CommandExample() {
   const commands = [
@@ -20,12 +20,12 @@ export default function CommandExample() {
         { label: "Paste", shortcut: "⌘V" },
       ],
     },
-  ]
+  ];
 
   return (
     <div className=" flex items-center justify-center">
       <p>Press Ctrl+J to open the Command Palette</p>
       <CommandDialog commands={commands} />
     </div>
-  )
+  );
 }
