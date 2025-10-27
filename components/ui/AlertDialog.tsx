@@ -150,6 +150,7 @@ export function AlertDialogFooter({ children }: { children: React.ReactNode }) {
   return <div className="mt-6 flex justify-end space-x-2">{children}</div>;
 }
 
+// ✅ FIXED: Pass event to onClick
 export function AlertDialogAction({
   children,
   onClick,
@@ -158,8 +159,8 @@ export function AlertDialogAction({
   return (
     <Button
       {...props}
-      onClick={() => {
-        onClick?.();
+      onClick={(e) => {
+        onClick?.(e);
       }}
     >
       {children}
@@ -167,6 +168,7 @@ export function AlertDialogAction({
   );
 }
 
+// ✅ FIXED: Pass event + close dialog
 export function AlertDialogCancel({ children, ...props }: ButtonProps) {
   const { setOpen } = useAlertDialog();
   return (
