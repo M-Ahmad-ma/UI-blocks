@@ -1,5 +1,4 @@
-
-'use client';
+"use client";
 
 import * as React from "react";
 import { cn } from "@/lib/utils/cn";
@@ -13,11 +12,20 @@ export interface ButtonProps
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
-    { className, variant = "default", size = "md", asChild = false, children, ...props },
-    ref
+    {
+      className,
+      variant = "default",
+      size = "md",
+      asChild = false,
+      children,
+      ...props
+    },
+    ref,
   ) => {
     const baseClasses =
-      "inline-flex items-center justify-center whitespace-nowrap rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-50 disabled:pointer-events-none";
+      "inline-flex items-center justify-center whitespace-nowrap rounded-md transition-colors " +
+      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 " +
+      "focus-visible:ring-offset-background disabled:opacity-50 disabled:pointer-events-none";
 
     const variantClasses =
       variant === "default"
@@ -37,13 +45,26 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           ? "px-6 py-3 text-lg"
           : "px-4 py-2 text-base";
 
-    const combinedClasses = cn(baseClasses, variantClasses, sizeClasses, className);
+    const combinedClasses = cn(
+      baseClasses,
+      variantClasses,
+      sizeClasses,
+      className,
+    );
 
     if (asChild && React.isValidElement(children)) {
-      return React.cloneElement(children as React.ReactElement, {
-        className: cn(children.props.className, combinedClasses),
-        ref,
+      // Use the child’s inferred props type for strong typing
+      type ChildProps =
+        typeof children extends React.ReactElement<infer P>
+          ? P
+          : Record<string, unknown>;
+
+      const child = children as React.ReactElement<ChildProps>;
+
+      return React.cloneElement(child, {
         ...props,
+        ref,
+        className: cn((child.props as ChildProps).className, combinedClasses),
       });
     }
 
@@ -52,8 +73,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {children}
       </button>
     );
-  }
+  },
 );
 
 Button.displayName = "Button";
-
