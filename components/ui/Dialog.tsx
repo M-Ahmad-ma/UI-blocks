@@ -1,72 +1,77 @@
-"use client"
+"use client";
 
-import React, { createContext, useContext, useState } from "react"
-import { XIcon } from "lucide-react"
-import { cn } from "@/lib/utils/cn"
+import React, { createContext, useContext, useState } from "react";
+import { XIcon } from "lucide-react";
+import { cn } from "@/lib/utils/cn";
 
 interface DialogContextValue {
-  open: boolean
-  setOpen: (v: boolean) => void
+  open: boolean;
+  setOpen: (v: boolean) => void;
 }
 
-const DialogContext = createContext<DialogContextValue | undefined>(undefined)
+const DialogContext = createContext<DialogContextValue | undefined>(undefined);
 
 function useDialogContext() {
-  const ctx = useContext(DialogContext)
-  if (!ctx) throw new Error("Dialog components must be used within <Dialog>")
-  return ctx
+  const ctx = useContext(DialogContext);
+  if (!ctx) throw new Error("Dialog components must be used within <Dialog>");
+  return ctx;
 }
 
 export function Dialog({ children }: { children: React.ReactNode }) {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
   return (
     <DialogContext.Provider value={{ open, setOpen }}>
       {children}
     </DialogContext.Provider>
-  )
+  );
 }
 
 type DialogTriggerProps = {
-  asChild?: boolean
-  children: React.ReactNode
-}
+  asChild?: boolean;
+  children: React.ReactNode;
+};
 
 export function DialogTrigger({ asChild, children }: DialogTriggerProps) {
-  const { setOpen } = useDialogContext()
+  const { setOpen } = useDialogContext();
 
   if (asChild && React.isValidElement(children)) {
-    return React.cloneElement(children as React.ReactElement<object>, {
+    type ClickableElement = React.ReactElement<{
+      onClick?: (e: React.MouseEvent) => void;
+    }>;
+    const child = children as ClickableElement;
+
+    return React.cloneElement(child, {
       onClick: (e: React.MouseEvent) => {
-        children.props?.onClick?.(e)
-        setOpen(true)
+        child.props.onClick?.(e);
+        setOpen(true);
       },
-    })
+    });
   }
 
   return (
     <button type="button" onClick={() => setOpen(true)}>
       {children}
     </button>
-  )
+  );
 }
 
 export function DialogOverlay(props: React.HTMLAttributes<HTMLDivElement>) {
-  const { className, ...rest } = props
+  const { className, ...rest } = props;
   return (
     <div
       className={cn(
         "fixed inset-0 z-40 bg-black/50 animate-in fade-in-0",
-        className
+        className,
       )}
       {...rest}
     />
-  )
+  );
 }
 
 interface DialogContentProps {
-  children: React.ReactNode
-  className?: string
-  showCloseButton?: boolean
+  children: React.ReactNode;
+  className?: string;
+  showCloseButton?: boolean;
 }
 
 export function DialogContent({
@@ -74,8 +79,8 @@ export function DialogContent({
   className,
   showCloseButton = true,
 }: DialogContentProps) {
-  const { open, setOpen } = useDialogContext()
-  if (!open) return null
+  const { open, setOpen } = useDialogContext();
+  if (!open) return null;
 
   return (
     <>
@@ -83,7 +88,7 @@ export function DialogContent({
       <div
         className={cn(
           "fixed top-1/2 left-1/2 z-50 grid w-full max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 rounded-lg border-border bg-card p-6 shadow-lg",
-          className
+          className,
         )}
       >
         {children}
@@ -94,14 +99,14 @@ export function DialogContent({
         )}
       </div>
     </>
-  )
+  );
 }
 
 type DialogCloseProps = {
-  asChild?: boolean
-  children?: React.ReactNode
-  className?: string
-} & React.ButtonHTMLAttributes<HTMLButtonElement>
+  asChild?: boolean;
+  children?: React.ReactNode;
+  className?: string;
+} & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
 export function DialogClose({
   asChild,
@@ -109,16 +114,21 @@ export function DialogClose({
   className,
   ...props
 }: DialogCloseProps) {
-  const { setOpen } = useDialogContext()
+  const { setOpen } = useDialogContext();
 
   if (asChild && React.isValidElement(children)) {
-    return React.cloneElement(children as React.ReactElement<object>, {
+    type ClickableElement = React.ReactElement<{
+      onClick?: (e: React.MouseEvent) => void;
+    }>;
+    const child = children as ClickableElement;
+
+    return React.cloneElement(child, {
       ...props,
       onClick: (e: React.MouseEvent) => {
-        children.props?.onClick?.(e)
-        setOpen(false)
+        child.props.onClick?.(e);
+        setOpen(false);
       },
-    })
+    });
   }
 
   return (
@@ -127,13 +137,13 @@ export function DialogClose({
       onClick={() => setOpen(false)}
       className={cn(
         "rounded-md p-1 opacity-70 hover:opacity-100 transition",
-        className
+        className,
       )}
       {...props}
     >
       {children}
     </button>
-  )
+  );
 }
 
 export function DialogHeader({
@@ -145,7 +155,7 @@ export function DialogHeader({
       className={cn("flex flex-col gap-2 text-center sm:text-left", className)}
       {...props}
     />
-  )
+  );
 }
 
 export function DialogFooter({
@@ -156,11 +166,11 @@ export function DialogFooter({
     <div
       className={cn(
         "flex flex-col-reverse gap-2 sm:flex-row sm:justify-end",
-        className
+        className,
       )}
       {...props}
     />
-  )
+  );
 }
 
 export function DialogTitle({
@@ -168,8 +178,11 @@ export function DialogTitle({
   ...props
 }: React.HTMLAttributes<HTMLHeadingElement>) {
   return (
-    <h2 className={cn("text-lg font-semibold leading-none", className)} {...props} />
-  )
+    <h2
+      className={cn("text-lg font-semibold leading-none", className)}
+      {...props}
+    />
+  );
 }
 
 export function DialogDescription({
@@ -178,6 +191,5 @@ export function DialogDescription({
 }: React.HTMLAttributes<HTMLParagraphElement>) {
   return (
     <p className={cn("text-sm text-muted-foreground", className)} {...props} />
-  )
+  );
 }
-

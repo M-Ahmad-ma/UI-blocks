@@ -16,7 +16,6 @@ export interface CustomCheckboxProps
   boxClassName?: string;
   iconClassName?: string;
 }
-
 const sizeMap: Record<Size, string> = {
   sm: "w-4 h-4",
   md: "w-5 h-5",
