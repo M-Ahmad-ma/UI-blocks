@@ -57,9 +57,15 @@ export function AlertDialogTrigger({
   const { setOpen } = useAlertDialog();
 
   if (asChild && React.isValidElement(children)) {
-    // Preserve existing onClick if present
-    const existingOnClick = (children.props as any)?.onClick;
-    return React.cloneElement(children as React.ReactElement<any>, {
+    // ✅ Strongly typed handling for child element
+    type ChildElement = React.ReactElement<{
+      onClick?: (e: React.MouseEvent) => void;
+    }>;
+
+    const child = children as ChildElement;
+    const existingOnClick = child.props.onClick;
+
+    return React.cloneElement(child, {
       onClick: (e: React.MouseEvent) => {
         existingOnClick?.(e);
         setOpen(true);
@@ -153,7 +159,6 @@ export function AlertDialogAction({
   children: React.ReactNode;
   onClick?: () => void;
 }) {
-  const { setOpen } = useAlertDialog();
   return (
     <Button
       {...props}
