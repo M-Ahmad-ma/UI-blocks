@@ -1,12 +1,10 @@
-import dynamic, { type Loader } from "next/dynamic";
-import type { FC } from "react";
+import dynamic from "next/dynamic";
+import type { ComponentType } from "react";
 
-type ExampleComponent = FC<Record<string, unknown>>;
-
-function dynamicExample(
-  loader: Loader<ExampleComponent>,
-): React.ComponentType<Record<string, unknown>> {
-  return dynamic(loader, { ssr: false });
+function dynamicExample<T extends Record<string, unknown>>(
+  loader: () => Promise<{ default: ComponentType<T> }>,
+): ComponentType<T> {
+  return dynamic(loader, { ssr: false }) as ComponentType<T>;
 }
 
 export const componentExamples = {
