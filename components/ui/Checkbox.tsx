@@ -16,6 +16,7 @@ export interface CustomCheckboxProps
   boxClassName?: string;
   iconClassName?: string;
 }
+
 const sizeMap: Record<Size, string> = {
   sm: "w-4 h-4",
   md: "w-5 h-5",
@@ -48,19 +49,20 @@ const Checkbox = forwardRef<HTMLInputElement, CustomCheckboxProps>(
     },
     ref,
   ) => {
-    const internalRef = useRef<HTMLInputElement | null>(null);
+    const internalRef = useRef<HTMLInputElement>(null);
 
-    // ✅ Sync forwarded ref
+    // ✅ Sync the forwarded ref
     useEffect(() => {
       if (!ref) return;
       if (typeof ref === "function") {
         ref(internalRef.current);
-      } else {
-        ref.current = internalRef.current;
+      } else if (ref && "current" in ref) {
+        (ref as React.MutableRefObject<HTMLInputElement | null>).current =
+          internalRef.current;
       }
     }, [ref]);
 
-    // ✅ Set indeterminate state on mount/update
+    // ✅ Handle indeterminate checkbox state
     useEffect(() => {
       if (internalRef.current) {
         internalRef.current.indeterminate = indeterminate;
@@ -80,7 +82,7 @@ const Checkbox = forwardRef<HTMLInputElement, CustomCheckboxProps>(
           className={`relative inline-flex items-center justify-center rounded-md border ${sizeCls} ${
             variant === "accent" ? "text-white" : "text-gray-900"
           } ${variantCls} transition-colors duration-150 ${boxClassName}`}
-          aria-hidden
+          aria-hidden="true"
         >
           <input
             ref={internalRef}
