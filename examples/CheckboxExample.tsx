@@ -1,6 +1,5 @@
-
 import React from "react";
-import  Checkbox  from "@/components/ui/Checkbox";
+import Checkbox from "@/components/ui/Checkbox";
 
 export default function CheckboxExample() {
   const [checked, setChecked] = React.useState(false);
@@ -13,7 +12,7 @@ export default function CheckboxExample() {
         checked={checked}
         onChange={(e) => setChecked(e.target.checked)}
         label="Accept terms"
-        size="md"
+        checkSize="md"
         variant="default"
         containerClassName="gap-2"
         boxClassName="shadow-sm"
@@ -31,7 +30,7 @@ export default function CheckboxExample() {
       <Checkbox
         checked={checked2}
         onChange={(e) => setChecked2(e.target.checked)}
-        size="lg"
+        checkSize="lg"
         variant="accent"
         label="Enable notifications"
       />
