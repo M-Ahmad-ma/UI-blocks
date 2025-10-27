@@ -53,7 +53,7 @@ export default function CardExample() {
         <Button type="submit" className="w-full">
           Login
         </Button>
-        <Button variant="outline" className="w-full">
+        <Button variant="secondary" className="w-full">
           Login with Google
         </Button>
       </CardFooter>
