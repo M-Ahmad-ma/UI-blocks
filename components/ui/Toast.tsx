@@ -29,21 +29,22 @@ export type ToastOptions = {
   action?: {
     label: string;
     onClick: (id: string | number) => void;
-  };
+  } | null;
   className?: string;
 };
 
 type ToastItem = Required<
   Pick<
     ToastOptions,
-    "id" | "title" | "description" | "duration" | "variant" | "className"
+    | "id"
+    | "title"
+    | "description"
+    | "duration"
+    | "variant"
+    | "action"
+    | "className"
   >
-> & {
-  action?: {
-    label: string;
-    onClick: (id: string | number) => void;
-  } | null;
-};
+>;
 
 type ToastContextValue = {
   toast: (
@@ -62,8 +63,6 @@ function genId(prefix = "toast") {
   idCounter += 1;
   return `${prefix}-${Date.now().toString(36)}-${idCounter}`;
 }
-
-/* ---------------- Toast Provider ---------------- */
 
 export function ToastProvider({
   children,
@@ -90,9 +89,7 @@ export function ToastProvider({
       action: payload.action ?? null,
       className: payload.className ?? "",
     };
-
     setToasts((s) => [item, ...s]);
-
     if (item.duration > 0) {
       const t = setTimeout(() => {
         setToasts((s) => s.filter((x) => x.id !== id));
@@ -100,7 +97,6 @@ export function ToastProvider({
       }, item.duration);
       timers.current.set(id, t);
     }
-
     return id;
   }, []);
 
@@ -129,7 +125,11 @@ export function ToastProvider({
   const value = useMemo(
     () => ({
       toast: (m: React.ReactNode | ToastOptions, o?: ToastOptions) => {
-        if (typeof m === "object" && ("title" in m || "description" in m)) {
+        if (
+          m &&
+          typeof m === "object" &&
+          ("title" in m || "description" in m)
+        ) {
           return push(m as ToastOptions);
         }
         const opts = o ?? {};
@@ -154,16 +154,13 @@ export function ToastProvider({
   );
 }
 
-/* ---------------- Hook ---------------- */
-
 export function useToast() {
   const ctx = useContext(ToastContext);
   if (!ctx) throw new Error("useToast must be used within a ToastProvider");
   return ctx;
 }
 
-/* ---------------- Global Binding ---------------- */
-
+// Global helper API
 const _globalRef: { current: ToastContextValue | null } = { current: null };
 
 export function bindToast(ctx: ToastContextValue | null) {
@@ -190,8 +187,6 @@ export function dismiss(id: string | number) {
 export function clearToasts() {
   _globalRef.current?.clear();
 }
-
-/* ---------------- Toaster Component ---------------- */
 
 function Toaster({
   toasts,
@@ -238,8 +233,6 @@ function Toaster({
     </div>
   );
 }
-
-/* ---------------- ToastCard ---------------- */
 
 function ToastCard({
   toast,
@@ -314,8 +307,6 @@ function ToastCard({
     </div>
   );
 }
-
-/* ---------------- Provider Binder ---------------- */
 
 export function ToastProviderBinder({
   children,
