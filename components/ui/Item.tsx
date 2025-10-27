@@ -1,7 +1,5 @@
 import * as React from "react";
-import type { JSX } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-
 import { cn } from "@/lib/utils/cn";
 import { Separator } from "@/components/ui/Separator";
 
@@ -57,9 +55,10 @@ type AsProp<C extends React.ElementType> = {
 
 type PropsToOmit<C extends React.ElementType, P> = keyof (AsProp<C> & P);
 
+// ✅ FIXED: replaced `{}` with `object`
 type PolymorphicComponentProps<
   C extends React.ElementType,
-  Props = {},
+  Props extends object = object,
 > = React.PropsWithChildren<Props & AsProp<C>> &
   Omit<React.ComponentPropsWithoutRef<C>, PropsToOmit<C, Props>>;
 
