@@ -51,19 +51,31 @@ const itemVariants = cva(
   },
 );
 
-interface ItemProps
-  extends React.ComponentProps<"div">,
-    VariantProps<typeof itemVariants> {
-  as?: keyof JSX.IntrinsicElements;
-}
+type AsProp<C extends React.ElementType> = {
+  as?: C;
+};
 
-function Item({
-  as: Comp = "div",
+type PropsToOmit<C extends React.ElementType, P> = keyof (AsProp<C> & P);
+
+type PolymorphicComponentProps<
+  C extends React.ElementType,
+  Props = {},
+> = React.PropsWithChildren<Props & AsProp<C>> &
+  Omit<React.ComponentPropsWithoutRef<C>, PropsToOmit<C, Props>>;
+
+type ItemProps<C extends React.ElementType = "div"> = PolymorphicComponentProps<
+  C,
+  VariantProps<typeof itemVariants>
+>;
+
+function Item<C extends React.ElementType = "div">({
+  as,
   className,
   variant = "default",
   size = "default",
   ...props
-}: ItemProps) {
+}: ItemProps<C>) {
+  const Comp = as || "div";
   return (
     <Comp
       data-slot="item"
