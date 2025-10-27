@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils/cn";
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "default" | "secondary" | "ghost" | "destructive";
+  variant?: "default" | "secondary" | "ghost" | "destructive" | "link";
   size?: "sm" | "md" | "lg";
   asChild?: boolean;
 }
