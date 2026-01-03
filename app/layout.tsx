@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   title: "UI Blocks Gallery",
   description: "No-iframe previews with Next.js + Tailwind + Framer Motion",
 };
-
+    
 export default function RootLayout({
   children,
 }: {
@@ -26,7 +26,7 @@ export default function RootLayout({
             <ToastProviderBinder position="top-right">
               <Header />
               <div className="bg-background text-primary max-w-9xl w-full">
-                {children}
+                {children} 
               </div>
             </ToastProviderBinder>
           </ErrorBoundary>

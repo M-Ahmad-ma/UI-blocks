@@ -5,7 +5,7 @@ export default function ButtonExample() {
   return (
     <div className="space-y-6 p-6">
       <div className="space-x-2">
-        <Button>Default</Button>
+        <Button variant="default">Default</Button>
       </div>
     </div>
   );

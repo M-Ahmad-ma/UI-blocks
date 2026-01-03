@@ -34,5 +34,9 @@ export const componentExamples = {
   breadcrumb: dynamicExample(() => import("@/examples/BreadcrumbExample")),
   empty: dynamicExample(() => import("@/examples/EmptyExample")),
   spinner: dynamicExample(() => import("@/examples/SpinnerExample")),
-  item: dynamicExample(() => import("@/examples/ItemExample")),
+  item: dynamicExample(() => import("@/examples/ItemExample")),  
+  tab: dynamicExample(() => import("@/examples/ExampleTab")), 
+  dropdown: dynamicExample(() => import("@/examples/DropdownExample")),
+  field: dynamicExample(() => import("@/examples/FieldExample"))
 } as const;
+  

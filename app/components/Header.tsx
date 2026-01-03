@@ -44,10 +44,10 @@ export default function Header() {
                 <h2 className="text-lg text-muted-foreground font-semibold mb-4">Navigation</h2>
 
                 <nav className="space-y-2 mb-6">
-                  {["blocks", "Cli"].map((link) => (
+                  {["Components", "cli"].map((link) => (
                     <Link
                       key={link}
-                      href={`/${link}`}
+                      href={`/${link}`}  
                     >
                       <span className="block text-xl text-foreground hover:text-primary">
                         {link.charAt(0).toUpperCase() + link.slice(1)}
@@ -79,7 +79,7 @@ export default function Header() {
           </Link>
 
           <nav className="hidden md:flex items-center space-x-5">
-            {["blocks", "Cli"].map((link) => (
+            {["Components", "cli", "blocks"].map((link) => (  
               <Link key={link} href={`/${link}`}>
                 <span className="text-primary capitalize cursor-pointer">{link}</span>
               </Link>

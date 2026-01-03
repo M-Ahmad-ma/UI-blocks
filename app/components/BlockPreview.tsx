@@ -56,16 +56,20 @@ export function BlockPreview({
         initial={{ opacity: 0, y: 5 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.15 }}
-        className="border-2 border-code h-[450px] overflow-y-scroll rounded-xl flex items-center justify-center no-scrollbar"
+        className={cn(
+          "border-2 border-code overflow-y-auto rounded-xl flex flex-col items-center justify-center no-scrollbar py-9",
+          tab === "code" ? "h-[450px] py-0" : "h-auto"
+        )}
       >
         {tab === "preview" ? (
-          <div className="w-[50%] flex justify-center items-center">
+          <div className="w-1/2 flex justify-center items-start p-4">
             {preview}
           </div>
         ) : (
           <CodeBlock code={code} />
         )}
       </motion.div>
+
     </div>
   );
 }
