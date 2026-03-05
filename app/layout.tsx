@@ -7,27 +7,39 @@ import ErrorBoundary from "./components/ErrorBoundry";
 import GlobalError from "@/app/components/Error";
 
 export const metadata: Metadata = {
-  title: "UI Blocks Gallery",
-  description: "No-iframe previews with Next.js + Tailwind + Framer Motion",
+  title: "UI-blocks | Beautiful UI Components",
+  description: "A collection of reusable UI components built with Tailwind CSS, React, and TypeScript",
+  keywords: ["UI components", "React", "Tailwind CSS", "shadcn alternative"],
 };
-    
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className="fixed w-full h-screen bg-zinc-950 ">
-
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                  document.documentElement.classList.add('dark');
+                } else {
+                  document.documentElement.classList.remove('dark');
+                }
+              } catch (e) {}
+            `,
+          }}
+        />
+      </head>
+      <body className="min-h-screen bg-background font-sans antialiased">
         <ComponentProvider>
           <ErrorBoundary errorComponent={GlobalError}>
-
             <ToastProviderBinder position="top-right">
               <Header />
-              <div className="bg-background text-primary max-w-9xl w-full">
-                {children} 
-              </div>
+              {children}
             </ToastProviderBinder>
           </ErrorBoundary>
         </ComponentProvider>

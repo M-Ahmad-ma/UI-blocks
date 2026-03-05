@@ -128,7 +128,12 @@ export const DropdownRadioGroup: React.FC<{ value: string; onChange: (val: strin
   onChange,
   children,
 }) => {
-  return <div className="flex flex-col">{React.Children.map(children, (child) => React.cloneElement(child as React.ReactElement<any>, { selectedValue: value, onSelect: onChange }))}</div>
+  return <div className="flex flex-col">{React.Children.map(children, (child) => {
+    if (React.isValidElement(child)) {
+      return React.cloneElement(child as React.ReactElement<{ selectedValue?: string; onSelect?: (val: string) => void }>, { selectedValue: value, onSelect: onChange });
+    }
+    return child;
+  })}</div>;
 }
 
 export const DropdownRadioItem: React.FC<

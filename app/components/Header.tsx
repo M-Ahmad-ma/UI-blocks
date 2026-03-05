@@ -1,17 +1,33 @@
 "use client"
 import { useState, useEffect } from "react"
-import { Moon, Sun, Github, X, Menu } from "lucide-react"
+import { Moon, Sun, Github, Menu, X, Search, ChevronRight } from "lucide-react"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { Sheet } from "@/components/ui/Sheet"
 import { Button } from "@/components/ui/Button"
-import { useComponentContext } from "@/Context/ComponentContext";
-import { Block } from "@/types"
+import { Badge } from "@/components/ui/Badge"
+import { Separator } from "@/components/ui/Separator"
+import { categories } from "@/lib/utils/categories"
+
+const navItems = [
+  { name: "Components", href: "/Components" },
+  { name: "CLI", href: "/cli" },
+]
 
 export default function Header() {
+  const pathname = usePathname()
   const [darkMode, setDarkMode] = useState(true)
   const [open, setOpen] = useState(false)
-  const { setSelected } = useComponentContext();
-  const [blocks, setBlocks] = useState<Block[]>([])
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme")
+    if (savedTheme) {
+      setDarkMode(savedTheme === "dark")
+    } else {
+      setDarkMode(window.matchMedia("(prefers-color-scheme: dark)").matches)
+    }
+  }, [])
 
   useEffect(() => {
     if (darkMode) {
@@ -19,104 +35,157 @@ export default function Header() {
     } else {
       document.documentElement.classList.remove("dark")
     }
+    localStorage.setItem("theme", darkMode ? "dark" : "light")
   }, [darkMode])
 
   useEffect(() => {
-    async function fetchBlocks() {
-      const res = await fetch("https://raw.githubusercontent.com/M-Ahmad-ma/ui-registry/main/blocks.json")
-      const data = await res.json()
-      setBlocks(data.blocks || [])
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 10)
     }
-    fetchBlocks()
+    window.addEventListener("scroll", handleScroll)
+    return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
   return (
-    <header className="w-full border-b border-border bg-background text-primary">
-      <div className="max-w-7xl mx-auto flex items-center justify-between px-3 h-12">
-        <div className="flex items-center space-x-6">
-
+    <header 
+      className={`sticky top-0 z-50 w-full border-b transition-colors ${
+        scrolled ? "bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60" : "bg-background"
+      } border-border`}
+    >
+      <div className="container mx-auto flex h-14 items-center px-4">
+        <div className="flex items-center gap-6">
+          {/* Mobile Menu */}
           <div className="md:hidden">
-            <Button variant="ghost" onClick={() => setOpen(true)}>
-              <Menu />
+            <Button variant="ghost" size="icon" onClick={() => setOpen(true)}>
+              <Menu className="h-5 w-5" />
             </Button>
             <Sheet open={open} onOpenChange={setOpen} position="left" size="sm">
-              <div>
-                <h2 className="text-lg text-muted-foreground font-semibold mb-4">Navigation</h2>
+              <div className="p-4">
+                <div className="flex items-center justify-between mb-6">
+                  <Link href="/" onClick={() => setOpen(false)} className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-md bg-gradient-to-tr from-primary to-purple-500" />
+                    <span className="font-semibold">UI-blocks</span>
+                  </Link>
+                  <Button variant="ghost" size="icon" onClick={() => setOpen(false)}>
+                    <X className="h-5 w-5" />
+                  </Button>
+                </div>
 
-                <nav className="space-y-2 mb-6">
-                  {["Components", "cli"].map((link) => (
+                <div className="relative mb-6">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <input
+                    type="text"
+                    placeholder="Search components..."
+                    className="w-full h-10 pl-9 pr-4 rounded-md border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                  />
+                </div>
+
+                <nav className="space-y-4">
+                  {navItems.map((item) => (
                     <Link
-                      key={link}
-                      href={`/${link}`}  
+                      key={item.name}
+                      href={item.href}
+                      onClick={() => setOpen(false)}
+                      className={`flex items-center justify-between p-2 rounded-md hover:bg-accent ${
+                        pathname === item.href ? "bg-accent font-medium" : ""
+                      }`}
                     >
-                      <span className="block text-xl text-foreground hover:text-primary">
-                        {link.charAt(0).toUpperCase() + link.slice(1)}
-                      </span>
+                      {item.name}
+                      <ChevronRight className="h-4 w-4 text-muted-foreground" />
                     </Link>
                   ))}
                 </nav>
 
-                <h2 className="text-md text-muted-foreground font-semibold mb-2">Components</h2>
-                <ul className="space-y-1 max-h-[600px] no-scrollbar overflow-y-auto pr-1">
-                  {blocks.map((block) => (
-                    <li key={block.id}>
-                      <Button variant="ghost" onClick={() => setSelected(block.id)} className="block text-foreground  px-2 py-1 rounded hover:bg-transparent border-none text-xl">
-                        {block.title}
-                      </Button>
-                    </li>
+                <Separator className="my-4" />
+
+                <div className="space-y-3">
+                  <h3 className="text-sm font-medium text-muted-foreground">Categories</h3>
+                  {categories.map((category) => (
+                    <div key={category.name}>
+                      <h4 className="text-xs font-medium text-muted-foreground uppercase mb-2">
+                        {category.name}
+                      </h4>
+                      <ul className="space-y-1">
+                        {category.components.slice(0, 3).map((comp) => (
+                          <li key={comp}>
+                            <Link
+                              href={`/Components?selected=${comp}`}
+                              onClick={() => setOpen(false)}
+                              className="block p-2 text-sm rounded-md hover:bg-accent capitalize"
+                            >
+                              {comp}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   ))}
-                </ul>
+                </div>
               </div>
             </Sheet>
           </div>
 
-          <Link href="/" className="md:flex hidden items-center space-x-2">
-            <div className="w-5 h-5 rounded-sm bg-gradient-to-tr from-primary to-accent" />
-            <span className="text-sm font-medium text-primary">UI-blocks</span>
-            <span className="ml-1 text-[10px] text-destructive border border-destructive rounded px-1">
-              Beta
-            </span>
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-2">
+            <div className="w-6 h-6 rounded-md bg-gradient-to-tr from-primary to-purple-500" />
+            <span className="font-semibold hidden sm:inline-block">UI-blocks</span>
           </Link>
 
-          <nav className="hidden md:flex items-center space-x-5">
-            {["Components", "cli", "blocks"].map((link) => (  
-              <Link key={link} href={`/${link}`}>
-                <span className="text-primary capitalize cursor-pointer">{link}</span>
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center gap-6">
+            {navItems.map((item) => (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={`text-sm font-medium transition-colors hover:text-foreground ${
+                  pathname === item.href 
+                    ? "text-foreground" 
+                    : "text-muted-foreground"
+                }`}
+              >
+                {item.name}
               </Link>
             ))}
           </nav>
         </div>
 
-        <div className="flex items-center space-x-4">
-          <div className="hidden md:flex items-center bg-muted border border-border rounded-md px-3 py-1 text-sm">
-            <input
-              type="text"
-              placeholder="Search documentation..."
-              className="bg-transparent outline-none text-foreground placeholder-muted-foreground w-40"
-            />
-            <span className="ml-2 text-xs text-muted-foreground border border-border px-1 rounded">
-              Ctrl K
-            </span>
+        <div className="flex flex-1 items-center justify-end gap-2">
+          {/* Search */}
+          <div className="hidden md:flex items-center">
+            <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground">
+              <Search className="h-4 w-4" />
+              <span className="text-xs">Search</span>
+              <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border border-border bg-muted px-1.5 font-mono text-[10px] font-medium">
+                <span className="text-xs">⌘</span>K
+              </kbd>
+            </Button>
           </div>
 
+          {/* GitHub */}
           <a
             href="https://github.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-primary"
+            className="p-2 rounded-md hover:bg-accent transition-colors"
           >
-            <Github size={16} />
+            <Github className="h-4 w-4" />
           </a>
 
-          <button
+          {/* Theme Toggle */}
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={() => setDarkMode(!darkMode)}
-            className="hover:text-primary"
+            className="h-9 w-9"
           >
-            {darkMode ? <Sun size={16} /> : <Moon size={16} />}
-          </button>
+            {darkMode ? (
+              <Sun className="h-4 w-4" />
+            ) : (
+              <Moon className="h-4 w-4" />
+            )}
+          </Button>
         </div>
       </div>
     </header>
   )
 }
-

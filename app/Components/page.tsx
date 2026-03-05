@@ -1,26 +1,23 @@
 "use client";
 
-import {
-  useEffect,
-  useState,
-  Button,
+import { useEffect, useState, Suspense } from "react";
+import { 
+  Button, 
   Separator,
-  Badge,
   BlockPreview,
   Terminal,
   Clipboard,
-  SiTypescript,
   useComponentContext,
   useToast,
   Tooltip,
-  Prism,
   componentExamples,
   toPascalCase,
   useCopy,
   useToggle,
+  Prism,
+  ErrorBoundary,
 } from "@/lib/utils/imports";
-import { log } from "console";
-import { ErrorBoundary } from "next/dist/client/components/error-boundary";
+import { categories } from "@/lib/utils/categories";
 
 interface Block {
   id: string;
@@ -30,7 +27,7 @@ interface Block {
   dependencies: string[];
 }
 
-export default function ComponentsPage() {
+function ComponentsContent() {
   const [blocks, setBlocks] = useState<Block[]>([]);
   const { selected, setSelected } = useComponentContext();
   const [CompCode, setCompCode] = useState<string>("");
@@ -82,7 +79,7 @@ export default function ComponentsPage() {
    
       setBlocks(cleanedBlocks);
 
-      if (cleanedBlocks.length > 0) {
+      if (cleanedBlocks.length > 0 && !selected) {
         setSelected(cleanedBlocks[0].id);
         setDetails(cleanedBlocks[0].description);
         setUsage(cleanedBlocks[0].usage);
@@ -90,7 +87,7 @@ export default function ComponentsPage() {
       }
     };
     fetchBlocks();
-  }, [setSelected]);
+  }, [setSelected, selected]);
 
   useEffect(() => {
     if (!selected || blocks.length === 0) return;    
@@ -101,7 +98,7 @@ export default function ComponentsPage() {
     setDependency(currentBlock.dependencies.join(" "));
   }, [selected, blocks]);
 
-  useEffect(() => {   
+  useEffect(() => {
     if (!selected) return;
     const fetchExampleCode = async () => {   
       const fileName = `${toPascalCase(selected)}Example.tsx`;   
@@ -119,60 +116,73 @@ export default function ComponentsPage() {
     fetchExampleCode();
   }, [selected]);
 
-  useEffect(() => {
+  useEffect(() => {   
     Prism.highlightAll();
   }, [code, CompCode, usage, cli]);
-
-  type ExampleName = keyof typeof componentExamples;
 
   const selectedLower = selected?.toLowerCase() as string;
 
   const Example =
     selectedLower && selectedLower in componentExamples
-      ? componentExamples[selectedLower as ExampleName]
+      ? componentExamples[selectedLower as keyof typeof componentExamples]
       : null;
 
-      //  console.log(blocks)
   return (
-    <div className="flex h-screen">
-      {/* Sidebar */}
-      <div className="lg:block md:hidden hidden overflow-y-scroll no-scrollbar w-64 bg-transparent p-4">
-        <h2 className="text-lg font-bold mb-4">Components</h2>   
-        <ul className="space-y-1 mb-10">  
-          {blocks.map((block) => (
-            <li key={block.id}>
-              <button
-                onClick={() => setSelected(block.id)}   
-                className={`w-fit text-left px-3 py-2 rounded-md transition ${
-                  selected === block.id ? "bg-code text-white" : "hover:bg-code"
-                }`}
-              >
-                {block.title}
-              </button>  
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <div className="flex-1 mx-auto overflow-y-auto no-scrollbar mb-10">
-        {selected ? (
-          <div className="flex flex-col items-center justify-center rounded-lg p-6 shadow">
-            <div className="flex flex-col items-start justify-start lg:w-2/3 md:w-full w-full mb-6">
-              <h1 className="text-[10px] font-bold mb-2">
-                {selected}
-              </h1>
-              <p className="text-muted-foreground">{details}</p>
+    <div className="flex h-[calc(100vh-3.5rem)]">
+      {/* Left Sidebar */}
+      <aside className="w-64 border-r border-border bg-card/50 overflow-y-auto no-scrollbar hidden md:block">
+        <div className="p-4">
+          <h2 className="text-sm font-semibold text-muted-foreground mb-4">Components</h2>
+          
+          {categories.map((category) => (
+            <div key={category.name} className="mb-6">
+              <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">
+                {category.name}
+              </h3>
+              <ul className="space-y-1">
+                {category.components.map((compId) => {
+                  const block = blocks.find(b => b.id === compId);
+                  if (!block) return null;
+                  return (
+                    <li key={compId}>
+                      <button
+                        onClick={() => setSelected(block.id)}   
+                        className={`w-full text-left px-3 py-2 rounded-md text-sm transition ${
+                          selected === block.id 
+                            ? "bg-primary-foreground text-primary font-medium" 
+                            : "hover:bg-accent hover:text-accent-foreground"
+                        }`}
+                      >
+                        {block.title}
+                      </button>  
+                    </li>
+                  );
+                })}
+              </ul>
             </div>
+          ))}
+        </div>
+      </aside>
 
-            {Example ? (
-              <div className="w-full lg:w-2/3 space-y-6">
+      {/* Main Content */}
+      <main className="flex-1 overflow-y-auto">
+        <div className="container max-w-2xl  mx-auto py-8 px-4">
+          {selected ? (
+            <div className="space-y-8">
+              {/* Header */}
+              <div>
+                <h1 className="text-lg font-semibold mb-2 capitalize">{selected}</h1>
+                <p className="text-muted-foreground">{details}</p>
+              </div>
+
+              {/* Preview */}
+              {Example ? (
                 <BlockPreview
-                  className="bg-transparent w-full"
                   title={selected}
                   preview={
                     <ErrorBoundary
                       errorComponent={() => (
-                        <p className="text-red-500">
+                        <p className="text-red-500 p-4">
                           Example failed to render.
                         </p>
                       )}
@@ -182,181 +192,151 @@ export default function ComponentsPage() {
                   }
                   code={code}
                 />
+              ) : (
+                <div className="p-8 border border-border rounded-lg bg-card">
+                  <p className="text-muted-foreground">No preview available.</p>
+                </div>
+              )}
 
-                <Badge
-                  variant="ghost"
-                  id="installation"
-                  className="text-2xl text-primary mb-1"
-                >
-                  Installation
-                </Badge>
-
-                <div className="mb-0">
+              {/* Installation */}
+              <section>
+                <h2 className="text-xl font-semibold mb-4">Installation</h2>
+                
+                <div className="flex gap-2 mb-4">
                   <Button
-                    variant="ghost"
+                    variant={cli ? "default" : "ghost"}
                     onClick={() => setCli(true)}
-                    className={`hover:bg-transparent ${cli ? "underline font-semibold" : ""}`}
+                    size="sm"
                   >
                     CLI
                   </Button>
                   <Button
-                    variant="ghost"
+                    variant={!cli ? "default" : "ghost"}
                     onClick={() => setCli(false)}
-                    className={`hover:bg-transparent ${!cli ? "underline font-semibold" : ""}`}
+                    size="sm"
                   >
                     Manual
                   </Button>
                 </div>
 
-                <div className="dark:bg-accent/30 bg-accent rounded-lg">
-                  <div className="flex relative items-center gap-3 p-1">
+                <div className="rounded-lg border border-border bg-card overflow-hidden">
+                  <div className="flex items-center justify-between px-4 py-2 border-b border-border bg-muted/50">
+                    <div className="flex items-center gap-2">
+                      <Terminal className="h-4 w-4" />
+                      <span className="text-sm">Terminal</span>
+                    </div>
                     <Tooltip
                       onClick={() => {
-                        copyToClipboard(`npm install ${selected}`);
-                        localToast({
-                          title: "Copied",
-                          variant: "success",
-                          duration: 4000,
-                        });
+                        const cmd = cli 
+                          ? `npx @zenblockz/ui-blocks add ${selected}`
+                          : `npm install ${dependency}`;
+                        copyToClipboard(cmd);
+                        localToast({ title: "Copied", variant: "success", duration: 2000 });
                       }}
                       content="Copy to clipboard"
-                      toolClassName="absolute right-3"
-                      className="text-muted"
                     >
-                      <Clipboard className="w-5 h-6 cursor-pointer text-muted-foreground" />
+                      <Clipboard className="h-4 w-4 cursor-pointer hover:text-foreground" />
                     </Tooltip>
-                    <Terminal className="w-5 h-5 p-1 ml-5 bg-primary text-muted" />
-                    <Badge variant="ghost">npm</Badge>
                   </div>
-                  <Separator className="w-full h-3 text-primary" />
-
-                  {cli ? (
-                    <pre className="rounded-lg p-2 overflow-x-auto">
-                      <code className="language-bash">{`npx @zenblockz/ui-blocks add ${selected}`}</code>
-                    </pre>
-                  ) : dependency.length > 0 ? (
-                    <pre className="rounded-lg p-2 overflow-x-auto">
-                      <code className="language-bash">{`npm install ${dependency}`}</code>
-                    </pre>
-                  ) : null}
+                  <pre className="p-4 overflow-x-auto">
+                    <code className="text-sm">
+                      {cli 
+                        ? `npx @zenblockz/ui-blocks add ${selected}`
+                        : dependency 
+                          ? `npm install ${dependency}`
+                          : "# No additional dependencies"
+                      }
+                    </code>
+                  </pre>
                 </div>
+              </section>
 
-                {!cli && (
-                  <div
-                    className={`dark:bg-accent/30 bg-accent relative overflow-hidden rounded-lg transition-all duration-300`}
-                    style={{ height: expanded ? "100%" : "300px" }}
-                  >
-                    <div className="w-full flex items-center justify-between p-3">
-                      <div className="flex items-center gap-2">
-                        <SiTypescript />
-                        <span className="text-muted-foreground">
-                          components/ui/{selected}.tsx
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Badge variant="ghost" onClick={toggleExpand}>
-                          {expanded ? "Collapse" : "Expand"}
-                        </Badge>
-                        <Separator
-                          variant="default"
-                          orientation="vertical"
-                          className="w-2 h-5"
-                        />
-                        <Tooltip
-                          content="Copy to clipboard"
-                          className="text-muted"
-                        >
-                          <Clipboard
-                            onClick={() => {
-                              copyToClipboard(CompCode);
-                              localToast({
-                                title: "Copied",
-                                description: "Code is copied",
-                                variant: "success",
-                                duration: 4000,
-                              });
-                            }}
-                            className="text-muted-foreground w-5 h-5 cursor-pointer"
-                          />
-                        </Tooltip>
-                      </div>
+              {/* Code */}
+              {!cli && (
+                <section>
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-xl font-semibold">Code</h2>
+                    <div className="flex gap-2">
+                      <Button variant="ghost" size="sm" onClick={toggleExpand}>
+                        {expanded ? "Collapse" : "Expand"}
+                      </Button>
+                      <Tooltip
+                        onClick={() => {
+                          copyToClipboard(CompCode);
+                          localToast({ title: "Copied", variant: "success", duration: 2000 });
+                        }}
+                        content="Copy to clipboard"
+                      >
+                        <Button variant="ghost" size="sm">
+                          <Clipboard className="h-4 w-4" />
+                        </Button>
+                      </Tooltip>
                     </div>
-                    <Separator />
-                    <pre className="rounded-lg p-2 no-scrollbar overflow-x-auto">
-                      <code className="language-ts">{CompCode}</code>
-                    </pre>
+                  </div>
 
+                  <div 
+                    className="rounded-lg border border-border bg-card overflow-hidden relative"
+                    style={{ maxHeight: expanded ? "none" : "400px" }}
+                  >
+                    <pre className="p-4 overflow-x-auto">
+                      <code className="text-sm language-ts">{CompCode}</code>
+                    </pre>
                     {!expanded && (
-                      <div className="absolute bottom-0 w-full p-2 flex items-center justify-center bg-white/60 dark:bg-gray-900/40 backdrop-blur-md">
-                        <Button
-                          onClick={toggleExpand}
-                          className="bg-transparent hover:bg-transparent text-primary"
-                        >
-                          Expand
+                      <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-card to-transparent">
+                        <Button variant="ghost" size="sm" onClick={toggleExpand} className="w-full">
+                          Show more
                         </Button>
                       </div>
                     )}
                   </div>
-                )}
+                </section>
+              )}
 
-                {usage.length > 0 && (
-                  <>
-                    <Badge variant="ghost" className="text-2xl mb-3" id="usage">
-                      Usage
-                    </Badge>
+              {/* Usage */}
+              {usage.length > 0 && (
+                <section>
+                  <h2 className="text-xl font-semibold mb-4">Usage</h2>
+                  <div className="space-y-3">
                     {usage.map((item, index) => (
-                      <div
-                        key={index}
-                        className="p-2 relative no-scrollbar rounded-lg bg-accent dark:bg-accent/30 text-code-foreground"
-                      >
-                        <Tooltip
-                          content="Copy to clipboard"
-                          toolClassName="absolute right-3"
-                          className="text-muted"
-                        >
-                          <Clipboard
+                      <div key={index} className="rounded-lg border border-border bg-card ">
+                        <div className="flex justify-end mb-2">
+                          <Tooltip
                             onClick={() => {
                               copyToClipboard(item);
-                              localToast({
-                                title: "Copied",
-                                description: "Copied to clipboard",
-                                variant: "success",
-                                duration: 4000,
-                              });
+                              localToast({ title: "Copied", variant: "success", duration: 2000 });
                             }}
-                            className="text-muted-foreground w-5 h-5 cursor-pointer"
-                          />
-                        </Tooltip>
-                        <pre className="whitespace-pre-wrap no-scrollbar bg-transparent text-sm mb-2">
+                            content="Copy to clipboard"
+                          >
+                            <Button variant="ghost" size="sm">
+                              <Clipboard className="h-4 w-4 mt-2" />
+                            </Button>
+                          </Tooltip>
+                        </div>
+                        <pre className="text-sm overflow-x-auto">
                           <code className="language-tsx">{item}</code>
                         </pre>
                       </div>
                     ))}
-                  </>
-                )}
-              </div>
-            ) : (
-              <p>No preview available.</p>
-            )}
-          </div>
-        ) : (
-          <p className="text-gray-500">Select a component from the sidebar.</p>
-        )}
-      </div>
-
-      {/* Right Sidebar */}
-      <div className="hidden md:block flex-shrink-0 w-64 p-5 bg-background text-muted-foreground">
-        <h4 className="text-lg font-semibold">On this page</h4>
-        <div className="mt-3 space-y-2">
-          <a href="#installation" className="hover:underline">
-            Installation
-          </a>
-          <br />
-          <a href="#usage" className="hover:underline">
-            Usage
-          </a>
+                  </div>
+                </section>
+              )}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-20">
+              <p className="text-muted-foreground">Select a component from the sidebar</p>
+            </div>
+          )}
         </div>
-      </div>
-    </div>
+      </main>
+
+          </div>
+  );
+}
+
+export default function ComponentsPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center h-screen">Loading...</div>}>
+      <ComponentsContent />
+    </Suspense>
   );
 }

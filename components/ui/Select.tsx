@@ -63,8 +63,7 @@ export function Select({ value, onValueChange, children }: SelectProps) {
    SelectTrigger
 ────────────────────────────────────────────── */
 
-interface SelectTriggerProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {}
+type SelectTriggerProps = React.ButtonHTMLAttributes<HTMLButtonElement>;
 
 export function SelectTrigger({
   className,
@@ -131,8 +130,7 @@ export function SelectValue({ placeholder }: SelectValueProps) {
    SelectContent
 ────────────────────────────────────────────── */
 
-interface SelectContentProps
-  extends React.HTMLAttributes<HTMLDivElement> {}
+type SelectContentProps = React.HTMLAttributes<HTMLDivElement>;
 
 export function SelectContent({
   className,

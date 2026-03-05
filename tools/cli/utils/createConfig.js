@@ -71,7 +71,8 @@ export function createConfig(cwd, framework, options) {
       cssVariables: options.cssVariables ?? true
     },
     aliases,
-    resolvedPaths
+    resolvedPaths,
+    registry: 'https://raw.githubusercontent.com/M-Ahmad-ma/ui-registry/main/blocks.json'
   };
 }
 

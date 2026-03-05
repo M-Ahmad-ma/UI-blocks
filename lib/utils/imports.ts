@@ -1,11 +1,12 @@
 export { useEffect, useState, useRef } from "react";
- 
+
 export { Button } from "@/components/ui/Button";
 export { Separator } from "@/components/ui/Separator";
 export { Badge } from "@/components/ui/Badge";
 export { BlockPreview } from "@/app/components/BlockPreview";
 export { useToast } from "@/components/ui/Toast";
 export { default as Tooltip } from "@/components/ui/Tooltip";
+export { default as ErrorBoundary } from "@/app/components/ErrorBoundry";
 
 export { default as CodeBlock } from "@/app/components/CodeBlock";
 

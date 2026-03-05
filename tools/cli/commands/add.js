@@ -1,10 +1,18 @@
 import fs from 'fs';
 import path from 'path';
+import { execSync } from 'child_process';
 import { checkDependencies } from '../utils/check-deps.js';
 import { fetchRegistry, fetchComponentFile } from '../utils/registry.js';
 import { getConfig } from '../utils/config.js';
 import { logInfo, logSuccess, logError, logWarning } from '../utils/logger.js';
 import { promptForConfirmation } from '../utils/prompts.js';
+
+const BASE_DEPENDENCIES = [
+  'class-variance-authority',
+  'clsx',
+  'tailwind-merge',
+  'tailwindcss-animate'
+];
 
 export async function add(components, options) {
   const cwd = path.resolve(options.cwd);
@@ -48,6 +56,7 @@ export async function add(components, options) {
     logInfo(`Adding all ${components.length} components...`);
   }
 
+  const allDependencies = new Set([...BASE_DEPENDENCIES]);
   const results = { installed: [], skipped: [], failed: [] };
 
   for (const name of components) {
@@ -57,6 +66,10 @@ export async function add(components, options) {
         logError(`Component not found: ${name}`);
         results.failed.push(name);
         continue;
+      }
+
+      if (block.dependencies) {
+        block.dependencies.forEach(dep => allDependencies.add(dep));
       }
 
       for (const file of block.files) {
@@ -89,11 +102,59 @@ export async function add(components, options) {
     }
   }
 
+  await installDependencies(cwd, allDependencies, options);
+
   if (!options.silent) {
     if (results.installed.length) logSuccess(`Installed: ${results.installed.join(', ')}`);
     if (results.failed.length) logError(`Failed: ${results.failed.join(', ')}`);
   }
 
   return results;
+}
+
+async function installDependencies(cwd, dependencies, options) {
+  const pj = path.join(cwd, 'package.json');
+  let packageJson;
+  try {
+    packageJson = JSON.parse(fs.readFileSync(pj, 'utf8'));
+  } catch {
+    return;
+  }
+
+  const allDeps = {
+    ...(packageJson.dependencies || {}),
+    ...(packageJson.devDependencies || {})
+  };
+
+  const missing = [...dependencies].filter(d => !allDeps[d]);
+  if (missing.length === 0) {
+    return;
+  }
+
+  logInfo(`Installing dependencies: ${missing.join(', ')}`);
+  
+  let cmd;
+  const packageManager = detectPackageManager(cwd);
+  
+  if (packageManager === 'yarn') {
+    cmd = `yarn add ${missing.join(' ')}`;
+  } else if (packageManager === 'pnpm') {
+    cmd = `pnpm add ${missing.join(' ')}`;
+  } else {
+    cmd = `npm install ${missing.join(' ')}`;
+  }
+
+  try {
+    execSync(cmd, { cwd, stdio: options.silent ? 'ignore' : 'inherit' });
+    logSuccess('Dependencies installed.');
+  } catch (e) {
+    logWarning(`Could not install dependencies: ${e.message}`);
+  }
+}
+
+function detectPackageManager(cwd) {
+  if (fs.existsSync(path.join(cwd, 'yarn.lock'))) return 'yarn';
+  if (fs.existsSync(path.join(cwd, 'pnpm-lock.yaml'))) return 'pnpm';
+  return 'npm';
 }
 

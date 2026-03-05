@@ -1,7 +1,12 @@
 #!/usr/bin/env node
+import path from 'path';
+import fs from 'fs';
 import { Command } from 'commander';
 import { init } from './commands/init.js';
 import { add } from './commands/add.js';
+import { remove } from './commands/remove.js';
+import { listComponents } from './utils/list.js';
+import { diff } from './commands/diff.js';
 import { logError, logInfo } from './utils/logger.js';
 
 const program = new Command();
@@ -82,9 +87,40 @@ program
   .command('list')
   .description('List all available components')
   .option('-c, --cwd <cwd>', 'Working directory', process.cwd())
+  .option('-s, --search <query>', 'Search components by name')
+  .option('-j, --json', 'Output as JSON')
   .action(async (options) => {
     try {
       await listComponents(options);
+    } catch (err) {
+      logError(err.message);
+      process.exit(1);
+    }
+  });
+
+program
+  .command('remove [components...]')
+  .description('Remove components from your project')
+  .option('-f, --force', 'Skip confirmation', false)
+  .option('-s, --silent', 'Mute output', false)
+  .option('-c, --cwd <cwd>', 'Working directory', process.cwd())
+  .action(async (components, options) => {
+    try {
+      await remove(components, options);
+    } catch (err) {
+      logError(err.message);
+      process.exit(1);
+    }
+  });
+
+program
+  .command('diff [components...]')
+  .description('Check for component updates')
+  .option('-c, --cwd <cwd>', 'Working directory', process.cwd())
+  .option('-u, --update', 'Apply updates automatically', false)
+  .action(async (components, options) => {
+    try {
+      await diff(components, options);
     } catch (err) {
       logError(err.message);
       process.exit(1);

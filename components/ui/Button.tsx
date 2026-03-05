@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils/cn";
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "default" | "secondary" | "ghost" | "destructive" | "link" | "outline";
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "icon";
   asChild?: boolean;
 }
 
@@ -45,7 +45,9 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         ? "px-3 py-1 text-sm"
         : size === "lg"
           ? "px-6 py-3 text-lg"
-          : "px-4 py-2 text-base";
+          : size === "icon"
+            ? "p-2"
+            : "px-4 py-2 text-base";
 
     const combinedClasses = cn(
       baseClasses,
